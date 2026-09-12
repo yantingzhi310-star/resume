@@ -12,15 +12,19 @@
 |---|---|
 | 本地查看 | 直接双击 `index.html` |
 | 本地服务器（推荐，剪贴板等 API 更完整） | `npx serve .` 或 `python -m http.server` |
-| 部署上线 | 把 `index.html` 和 `og-image.png` **两个文件**一起上传到任意静态托管 |
+| **发布到公网，让别人也能看** | 见 **[DEPLOY.md](DEPLOY.md)** |
 
-> ⚠️ `og-image.png` 是社交分享卡片（微信 / LinkedIn / Twitter 转发时显示的那张图）。不上传它，分享出去就是纯文字卡片。
-> 它由 `node _og-image.cjs` 按当前简历内容生成——**改完内容记得重新跑一次**，否则分享图上还是旧名字。
+### 发布前三步
 
-部署到 GitHub Pages：把这两个文件放进仓库根目录，Settings → Pages → 选 `main` 分支根目录。
-部署到 Vercel / Netlify / Cloudflare Pages：直接把文件夹拖进去，无需任何构建配置。
+```bash
+node _preflight.cjs      # 自检：内容替换了吗？分享卡片对吗？Key 会不会公开？
+node _og-image.cjs       # 按当前简历内容重画分享卡片
+# 然后照 DEPLOY.md 走（Netlify 拖文件夹 / Vercel / GitHub Pages 三条路线）
+```
 
-上线后进管理员面板，「站点设置 → 站点地址」填上你的域名再导出一次。分享卡片要求绝对 URL，不填的话微信和 LinkedIn 抓不到图。
+`_preflight.cjs` 拦的是最常见也最尴尬的错——**把还没替换的示例人设发到公网**，让招聘方打开看到一份虚构的简历。它没报绿色「可以发布」之前别往下走。
+
+部署需要**两个文件**：`index.html` 和 `og-image.png`。少传后者，分享到微信 / LinkedIn 就没有配图，只有一行干巴巴的文字。
 
 ---
 
@@ -154,14 +158,18 @@ Hero 区右侧是个**真的能用**的终端，试试输入 `help`、`whoami`�
 ```
 index.html     整站。HTML + CSS + JS 全部内联                        ← 部署
 og-image.png   社交分享卡片 1200×630                                 ← 部署
+DEPLOY.md      部署指南（Netlify / Vercel / GitHub Pages 三条路线）
 README.md      本文档
+vercel.json    Vercel 的缓存与安全响应头配置
+.nojekyll      GitHub Pages 用：禁用 Jekyll，仓库里有什么就发布什么
 
+_preflight.cjs 发布前自检 ← 推上公网前必跑
+_og-image.cjs  按当前简历内容重新生成 og-image.png
 _test.cjs      逻辑冒烟测试（纯 Node，秒级）
 _visual.cjs    真实浏览器验证（Chrome + CDP）
 _audit.cjs     响应式布局审计（1440 / 834 / 390 / 320 四档）
 _admin.cjs     管理员模式专项测试（认证、增删改、导出文件可用性）
 _crop.cjs      局部高清截图 + WCAG 对比度数值核算
-_og-image.cjs  按当前简历内容重新生成 og-image.png
 _final.cjs     生成成品截图
 _adm-shot.cjs  生成管理员面板截图
 ```
@@ -169,6 +177,7 @@ _adm-shot.cjs  生成管理员面板截图
 跑测试：
 
 ```bash
+node _preflight.cjs   # 发布前自检（不需要浏览器）
 node _test.cjs        # 逻辑层：数据完整性、分词、AI 问答、转义、异常输入
 
 # 浏览器相关的脚本需要先起一个带调试端口的 Chrome：
@@ -186,6 +195,7 @@ node _og-image.cjs    # 重新生成分享卡片
 
 | 脚本 | 能发现什么 |
 |---|---|
+| `_preflight.cjs` | 示例内容未替换、分享卡片地址是占位域名、图与内容不同步、API Key 会被公开、体积超标、知识库为空 |
 | `_test.cjs` | 数据字段缺失、图标名无效、分词/检索退化、AI 引用夹杂代码、并列提问只答一半、拼写纠错越界、XSS 转义失效、空输入与超长输入崩溃 |
 | `_visual.cjs` | 真实浏览器 JS 报错、元素未渲染、筛选计数与卡片数不一致、空区块、读屏刷屏（aria-live）、交互失效、主题持久化、打印样式 |
 | `_audit.cjs` | 四档视口下的横向溢出、文字截断、空区块、入场动画漏触发 |
