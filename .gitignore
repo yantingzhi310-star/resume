@@ -1,0 +1,17 @@
+# ── 本地跑测试时产生的临时文件，不要提交 ──────────────────────────────
+_chrome-profile/
+_shot/
+_crop/
+_final/
+_adm-shot/
+_exported.html
+_recovered-profile.json
+_check.js
+
+# ── 编辑器 / 系统 ──────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.log
