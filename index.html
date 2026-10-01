@@ -4308,6 +4308,34 @@ function blankFor(list) {
 }
 
 /* ── 6.13 导出 ────────────────────────────────────────────────────────── */
+
+/** 由 PROFILE 生成 schema.org 的 Person 结构化数据。
+ *  之前这块是硬编码的：无论怎么改内容，搜索引擎拿到的都还是最初那个人的信息。
+ *  导出时重新生成，空字段直接去掉，不留 "xxx": undefined。 */
+function buildLdJson() {
+  const m = PROFILE.meta || {};
+  const edu = (PROFILE.education || []).find(e => e.type === 'edu');
+  const knows = ((PROFILE.skills && PROFILE.skills.cloud) || []).slice(0, 12);
+  const base = String(SITE.cfg.siteUrl || m.site || '').replace(/\/+$/, '');
+  const sameAs = [m.github, m.site].filter(u => u && !/example\.com/i.test(u) && u !== m.site);
+
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: m.nameZh,
+    alternateName: m.nameEn || undefined,
+    jobTitle: (m.roles || []).join(' / ') || undefined,
+    email: m.email ? 'mailto:' + m.email : undefined,
+    url: base || undefined,
+    address: m.location ? { '@type': 'PostalAddress', addressLocality: m.location, addressCountry: 'CN' } : undefined,
+    knowsAbout: knows.length ? knows : undefined,
+    alumniOf: edu ? { '@type': 'CollegeOrUniversity', name: edu.title } : undefined,
+    sameAs: sameAs.length ? sameAs : undefined
+  };
+  Object.keys(data).forEach(k => { if (data[k] === undefined) delete data[k]; });
+  // < 转义，避免数据里出现能提前闭合 script 标签的序列
+  return JSON.stringify(data, null, 2).replace(/</g, '\\u003c');
+}
 function buildExportHtml() {
   const data = { generator: 'resume-site admin', exportedAt: new Date().toISOString(), profile: PROFILE, cfg: SITE.cfg };
   if (SITE.ai) data.ai = SITE.ai;
@@ -4333,6 +4361,10 @@ function buildExportHtml() {
   html = html.replace(/(<meta property="og:description" content=")[^"]*(")/, '$1' + esc(desc).replace(/\$/g, '$$$$') + '$2');
   html = html.replace(/(<meta name="twitter:description" content=")[^"]*(")/, '$1' + esc(desc).replace(/\$/g, '$$$$') + '$2');
   html = html.replace(/(<meta property="og:image:alt" content=")[^"]*(")/, '$1' + esc(title) + '$2');
+
+  // 结构化数据也必须跟着内容走，否则搜索引擎一直索引最初那个人
+  html = html.replace(/(<script type="application\/ld\+json">)[\s\S]*?(<\/script>)/,
+    function (m, a, b) { return a + '\n' + buildLdJson() + '\n' + b; });
 
   /* 分享卡片的 URL 必须是绝对地址，否则微信 / LinkedIn 抓不到图。
      域名从「站点设置 → 站点地址」取，没填就退回 meta.site 并去掉结尾斜杠。 */

@@ -42,14 +42,17 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
   console.log('\n=== 1. 环境与入口 ===');
 
   const env = await js(`
+    const sd = JSON.parse((document.querySelector('#siteData').textContent || '{}').trim() || '{}');
     return { subtle: !!(window.crypto && window.crypto.subtle),
              secure: window.isSecureContext,
              entry: !!document.querySelector('#adminEntry'),
              panelHidden: document.querySelector('#adminPanel').hidden,
-             siteDataEmpty: document.querySelector('#siteData').textContent.trim() === '{}' };
+             siteDataHasProfile: !!sd.profile,
+             siteDataCfg: sd.cfg ? Object.keys(sd.cfg).join(',') : '' };
   `);
   check(env.subtle, 'file:// 下 WebCrypto 可用（PBKDF2 密码哈希的前提）');
-  check(env.siteDataEmpty, '初始状态 siteData 为空（使用文件默认值）');
+  check(!env.siteDataHasProfile, '初始状态没有烘焙简历内容（用文件里的默认值）' +
+    (env.siteDataCfg ? '，但有站点级配置：' + env.siteDataCfg : ''));
   check(env.entry && env.panelHidden, '页脚有「管理」入口，面板默认隐藏');
 
   console.log('\n=== 2. 首次进入：设置密码 ===');
@@ -191,6 +194,22 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
   check(/张伟的个人主页/.test(html), '导出文件的 <title> 已静态写入（不依赖 JS）');
   check(html.indexOf('test1234') === -1, '导出文件不含明文密码');
   check(/data-theme="light"/.test(html), '导出文件的 html 标签已写入主题，避免首帧闪烁');
+
+  // 结构化数据（schema.org）以前是硬编码的，导出不会更新——搜索引擎会一直索引最初那个人
+  const lde = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+  check(!!lde, '导出文件里有 schema.org 结构化数据块');
+  if (lde) {
+    let ld = null;
+    try { ld = JSON.parse(lde[1].replace(/\\u003c/g, '<')); } catch (e) { check(false, '结构化数据不是合法 JSON：' + e.message); }
+    if (ld) {
+      check(ld.name === '张伟', '导出的结构化数据已跟随内容重建：name = ' + ld.name);
+      check(/^mailto:/.test(ld.email || ''), '结构化数据邮箱格式正确：' + ld.email);
+      check(!/陈屿/.test(lde[1]), '原来的硬编码姓名「陈屿」已从结构化数据里消失');
+      check(ld['@type'] === 'Person' && !!ld['@context'], '结构化数据保留了 @context / @type');
+      const undef = /:\s*undefined/.test(lde[1]);
+      check(!undef, '结构化数据里没有 undefined 字段泄漏');
+    }
+  }
 
   const m = html.match(/<script type="application\/json" id="siteData">([\s\S]*?)<\/script>/);
   check(!!m, '找到 siteData 数据块');

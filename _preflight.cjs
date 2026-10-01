@@ -151,6 +151,31 @@ if (ogSize !== null) {
   }
 }
 
+/* ── 3b. 结构化数据（SEO）────────────────────────────────────────────── */
+head('3b. 结构化数据 schema.org');
+const ldm = text.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+if (!ldm) {
+  bad('找不到 schema.org 结构化数据块');
+} else {
+  try {
+    const ld = JSON.parse(ldm[1].replace(/\\u003c/g, '<'));
+    if (ld.name !== P.meta.nameZh) {
+      bad('结构化数据里的姓名是「' + ld.name + '」，站点内容是「' + P.meta.nameZh + '」——搜索引擎会索引到错误的人');
+      console.log('      → 在管理员面板导出一次 index.html，导出会自动重建这段数据。');
+    } else {
+      ok('姓名一致：' + ld.name);
+    }
+    const ldEmail = String(ld.email || '').replace(/^mailto:/, '');
+    if (ldEmail && P.meta.email && ldEmail !== P.meta.email) {
+      warn('结构化数据邮箱「' + ldEmail + '」与站点内容「' + P.meta.email + '」不一致');
+    }
+    if (/example\.com/i.test(JSON.stringify(ld))) warn('结构化数据里仍有 example.com 占位地址');
+    if (/示例/.test(JSON.stringify(ld))) warn('结构化数据里仍有「示例…」占位名称（比如学校名）');
+  } catch (e) {
+    bad('结构化数据不是合法 JSON：' + e.message);
+  }
+}
+
 /* ── 4. API Key 安全 ─────────────────────────────────────────────────── */
 head('4. API Key 是否会公开');
 const baked = X.SITE && X.SITE.ai;
