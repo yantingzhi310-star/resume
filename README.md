@@ -165,6 +165,12 @@ vercel.json    Vercel 的缓存与安全响应头配置
 
 _preflight.cjs 发布前自检 ← 推上公网前必跑
 _og-image.cjs  按当前简历内容重新生成 og-image.png
+_answer-audit.cjs  抽查本地 AI 回答里有没有编造内容（数据里没有的项目名/数字）
+
+_merge-resume.cjs  整理管理员导出的 resume-data.json（加 --bake 直接写进 index.html）
+_rebuild.cjs       用站点自己的导出逻辑重建 index.html，同步静态 title / meta / 结构化数据
+_sync-default.cjs  把真实数据同步进文件里的 DEFAULT_PROFILE
+
 _test.cjs      逻辑冒烟测试（纯 Node，秒级）
 _visual.cjs    真实浏览器验证（Chrome + CDP）
 _audit.cjs     响应式布局审计（1440 / 834 / 390 / 320 四档）

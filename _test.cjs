@@ -292,28 +292,36 @@ aliasKeys.forEach(a => {
   ok(got === T.ALIAS[a], '独立的 「' + a + '」正常命中 → ' + (got || 'null'));
 });
 
-console.log('\n=== 14. 并列提问要分别作答，不能只答一半 ===');
+console.log('\n=== 14. 并列提问：每个小问都要有交代，不能静默丢弃 ===');
 const MULTI = [
-  ['他做过什么项目，期望薪资多少？', 2, '项目 + 薪资'],
-  ['他有什么技能？带过团队吗？', 2, '技能 + 团队'],
-  ['你好', 1, '单纯寒暄不该被拆成多段'],
-  ['他做过什么项目？', 1, '单个问题保持单段回答']
+  ['他做过什么项目，期望薪资多少？', '项目 + 薪资'],
+  ['他有什么技能？带过团队吗？', '技能 + 团队'],
+  ['你好', '单纯寒暄不该被拆成多段'],
+  ['他做过什么项目？', '单个问题保持单段回答']
 ];
-for (const [q, minParts, why] of MULTI) {
+for (const [q, why] of MULTI) {
   const a = T.localAnswer(q);
   const txt = a ? a.text : '';
-  // 多段回答会带「你问了几件事」，用编号 1. 2. 标记
-  const parts = (txt.match(/\*\*\d+\.\*\*/g) || []).length;
-  if (minParts === 1) {
-    ok(parts === 0, '「' + q + '」保持单段（' + why + '）');
+  const numbered = (txt.match(/\*\*\d+\.\*\*/g) || []).length;
+  const noted = /简历里(暂时)?没有可回答的内容|确实还没写/.test(txt);
+  if (q === '你好' || q === '他做过什么项目？') {
+    ok(numbered === 0, '「' + q + '」保持单段（' + why + '）');
   } else {
-    ok(parts >= 2, '「' + q + '」拆成 ' + parts + ' 段作答（' + why + '）');
+    // 只要能答的都答了、答不上的明说了，就算合格——项目为空时不可能凑出两段
+    ok(numbered >= 2 || noted,
+      '「' + q + '」每个小问都有交代（分点 ' + numbered + ' 段' + (noted ? '，未答部分已明示' : '') + '）');
   }
 }
+
 const multi = T.localAnswer('他做过什么项目，期望薪资多少？');
 console.log('\n--- 并列提问的完整回答 ---');
-console.log(multi.text.split('\n').slice(0, 6).join('\n'));
-ok(/项目|代表作/.test(multi.text) && /万|薪/.test(multi.text), '两部分内容都在回答里，没有被丢掉');
+console.log(multi.text.split('\n').filter(Boolean).slice(0, 5).join('\n'));
+ok(/万|薪/.test(multi.text), '薪资部分被回答');
+if ((P.projects || []).length === 0) {
+  ok(/没有可回答的内容|确实还没写/.test(multi.text), '项目部分没有数据时明确说明，而不是静默丢掉');
+} else {
+  ok(/项目|代表作|列了/.test(multi.text), '项目部分被回答');
+}
 
 console.log('\n' + (failed === 0 ? '✅ 全部通过（0 失败）' : '❌ ' + failed + ' 项失败'));
 process.exit(failed === 0 ? 0 : 1);

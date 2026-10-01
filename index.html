@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>杨旭阳 · AI 应用工程师 — 交互式简历</title>
 <meta name="description" content="学习能力强、实操经验足，能熟练运用 AI 工具落地原创项目，并有1年新媒体运营经验。">
-<meta name="author" content="陈屿">
+<meta name="author" content="杨旭阳">
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#0b0e13">
 
@@ -1033,7 +1033,7 @@ kbd{
 <header class="topbar">
   <div class="topbar__in">
     <a class="brand" href="#top" aria-label="回到顶部">
-      <span class="brand__mark">~/</span><span id="brandName">chenyu</span><span class="brand__cursor" aria-hidden="true"></span>
+      <span class="brand__mark">~/</span><span id="brandName">YANGxuyang</span><span class="brand__cursor" aria-hidden="true"></span>
     </a>
 
     <nav class="nav" id="nav" aria-label="主导航">
@@ -1073,7 +1073,7 @@ kbd{
         <i aria-hidden="true"></i><span>OPEN TO WORK · 可接受新机会</span>
       </div>
 
-      <h1 class="hero__name reveal">你好，我是 <em id="heroName">陈屿</em></h1>
+      <h1 class="hero__name reveal">你好，我是 <em id="heroName">杨旭阳</em></h1>
 
       <p class="hero__role reveal" aria-live="polite">
         <span id="typedRole"></span><span class="cursor" aria-hidden="true"></span>
@@ -1434,418 +1434,395 @@ kbd{
  * ========================================================================== */
 
 const DEFAULT_PROFILE = {
-
-  /* ── 基本身份 ─────────────────────────────────────────────────────────── */
-  meta: {
-    handle: 'chenyu',                            // 顶栏显示的路径名
-    nameZh: '陈屿',
-    nameEn: 'Yu Chen',
-    roles: [                                     // Hero 打字机轮播的职位名
-      'AI 应用工程师',
-      '全栈工程师',
-      'LLM 应用架构师',
-      '把模型变成产品的人'
+  "meta": {
+    "handle": "YANGxuyang",
+    "nameZh": "杨旭阳",
+    "nameEn": "sun",
+    "roles": [
+      "AI 应用工程师",
+      "专属IP形象定制",
+      "新媒体运营",
+      "把模型变成产品的人"
     ],
-    status: 'OPEN TO WORK · 可接受新机会',
-    location: '上海 · 接受远程',
-    email: 'hi@example.com',
-    wechat: 'chenyu_dev',
-    phone: '+86 138 0000 0000',
-    github: 'https://github.com/example',
-    site: 'https://example.com',
-    // 首页那句自我定位，支持 <strong> 加粗
-    pitch: '6 年研发经验，前 3 年做前端与工程化，近 3 年专注于 <strong>把大模型能力做成能上线、能扛量、算得清 ROI 的产品</strong>。既写得了 RAG 检索链路和 Agent 编排，也能把界面打磨到招聘官愿意多看两眼。',
-    footerSig: '系统正常 · 已就绪'
+    "status": "OPEN TO WORK · 可接受新机会",
+    "location": "山西 · 接受线上线下",
+    "email": "y18234592566@qq.com",
+    "wechat": "18234592566",
+    "phone": "+86 18234592566",
+    "github": "https://github.com/yantingzhi310-star",
+    "site": "",
+    "pitch": "学习能力强、实操经验足，能熟练运用 AI 工具落地原创项目，并有1年新媒体运营经验。",
+    "footerSig": "系统正常 · 已就绪"
   },
-
-  /* ── 首屏数字 ─────────────────────────────────────────────────────────── */
-  stats: [
-    { num: '6',   suffix: '年', label: '研发经验' },
-    { num: '3',   suffix: '年', label: 'AI 应用落地' },
-    { num: '12',  suffix: '+',  label: '上线项目' },
-    { num: '8',   suffix: '人', label: '带过最大团队' }
+  "stats": [
+    {
+      "num": "2",
+      "suffix": "年",
+      "label": "运营与AI实战经验"
+    },
+    {
+      "num": "1",
+      "suffix": "年",
+      "label": "AI 应用落地"
+    },
+    {
+      "num": "5",
+      "suffix": "+",
+      "label": "上线项目"
+    },
+    {
+      "num": "16",
+      "suffix": "人",
+      "label": "校内AI部团队"
+    }
   ],
-
-  /* ── 关于：叙事段落 + 以源码注释形式呈现的「速查卡」 ─────────────────── */
-  about: {
-    // 首屏那句话是「钩子」，这里是完整叙事：我是谁 → 我怎么做事 → 我在找什么
-    intro: [
-      '我是陈屿，做 AI 应用的全栈工程师。2019 年入行，前 3 年在 SaaS 和金融科技写前端、做工程化；2023 年转向 AI 应用，从 0 到 1 搭过企业知识库问答平台和客服工单 Agent，也带过 8 人的跨职能小组。',
-      '简历上写「全栈」，但我更愿意把自己描述成 <strong>做闭环的人</strong>——需求该不该砍、检索准不准、延迟压不压得住、单次调用成本算不算得清，这些事总得有人从头盯到尾。',
-      '现在想找一个愿意把 AI 真正做进业务流程、而不是停在 Demo 阶段的团队。'
+  "about": {
+    "file": "about.ts",
+    "lines": [
+      {
+        "t": "c",
+        "s": "/**"
+      },
+      {
+        "t": "c",
+        "s": " * @file   关于我 · 数字媒体技术 × AI 应用"
+      },
+      {
+        "t": "c",
+        "s": " * @author 杨旭阳 <y18234592566@qq.com>"
+      },
+      {
+        "t": "c",
+        "s": " * @since  2025"
+      },
+      {
+        "t": "c",
+        "s": " */"
+      },
+      {
+        "t": "k",
+        "s": "const 杨旭阳 = {"
+      },
+      {
+        "t": "p",
+        "s": "  定位",
+        "v": "\"用 AI 工具把想法做成能跑起来的东西\""
+      },
+      {
+        "t": "p",
+        "s": "  现居",
+        "v": "\"山西 · 接受线上线下\""
+      },
+      {
+        "t": "p",
+        "s": "  专业",
+        "v": "\"数字媒体技术 · 朔州陶瓷职业技术学院\""
+      },
+      {
+        "t": "p",
+        "s": "  在校",
+        "v": "\"AI 部负责人（30 人）· 新媒体摄像部部长（10 人）\""
+      },
+      {
+        "t": "p",
+        "s": "  擅长",
+        "v": "[\"AI 可视化\", \"RAG 本地知识库\", \"定制 Agent\", \"模型本地部署\", \"拍摄剪辑\"]"
+      },
+      {
+        "t": "p",
+        "s": "  做过",
+        "v": "\"从 0 到 1 运营 TK 账号 · 带 30 位同学从认识 AI 到独立做出 Agent\""
+      },
+      {
+        "t": "p",
+        "s": "  信条",
+        "v": "\"先做出最小可用的东西，再回头补原理。\""
+      },
+      {
+        "t": "p",
+        "s": "  在找",
+        "v": "\"能把 AI 真正用进业务的团队\""
+      },
+      {
+        "t": "k",
+        "s": "};"
+      }
     ],
-    file: 'about.ts',
-    lines: [
-      { t: 'c', s: '/**' },
-      { t: 'c', s: ' * @file   关于我 · 一句话说不完的那部分' },
-      { t: 'c', s: ' * @author 陈屿 <hi@example.com>' },
-      { t: 'c', s: ' * @since  2019' },
-      { t: 'c', s: ' */' },
-      { t: 'k', s: 'const 陈屿 = {' },
-      { t: 'p', s: '  定位', v: '"把大模型能力做成能上线、能扛量、算得清 ROI 的产品"' },
-      { t: 'p', s: '  现居', v: '"上海 · 接受远程"' },
-      { t: 'p', s: '  履历', v: '"3 年 SaaS / 金融科技前端 → 3 年 AI 应用全栈"' },
-      { t: 'p', s: '  擅长', v: '["RAG 检索增强", "Agent 编排", "LLM 评测体系", "前端工程化"]' },
-      { t: 'p', s: '  代表作', v: '"企业知识库问答平台 · 日均 1.8 万问 · 采纳率 82%"' },
-      { t: 'p', s: '  信条', v: '"先跑通闭环，再谈优化；没有度量的优化都是玄学。"' },
-      { t: 'p', s: '  怪癖', v: '"写 Prompt 之前先写评测集"' },
-      { t: 'p', s: '  正在学', v: '["vLLM 推理优化", "Rust", "多模态 Agent"]' },
-      { t: 'p', s: '  在找', v: '"一个愿意把 AI 做进业务闭环的团队"' },
-      { t: 'k', s: '};' }
+    "traits": [
+      {
+        "icon": "sparkles",
+        "title": "AI 落地能力",
+        "desc": "在 AI 部带着 30 位同学，从「认识 AI」讲到每个人能独立做出自己的 Agent。自己也做过本地知识库、模型本地部署、AI 生图生视频。"
+      },
+      {
+        "icon": "zap",
+        "title": "内容全流程独立完成",
+        "desc": "TK 账号从策划、选题、创作、剪辑到发布一个人跑完。能对标热点做爆款复刻，也能独立完成有难度的剪辑。"
+      },
+      {
+        "icon": "layers",
+        "title": "同时带两个部门",
+        "desc": "AI 部（30 人）+ 新媒体摄像部（10 人），负责部门日常运转、任务分配，以及校级活动的拍摄与剪辑。"
+      },
+      {
+        "icon": "target",
+        "title": "实战优先的学习方式",
+        "desc": "习惯先做出最小可用的东西，再回头补原理。学新工具的方式，是直接拿它做一个真项目出来。"
+      }
     ],
-    traits: [
-      { icon: 'target',   title: '产品思维优先',   desc: '先问「这个需求解决了谁的什么问题」，再决定写不写代码。做过 3 次需求评审里的「反对派」，帮团队砍掉约 40% 的无效排期。' },
-      { icon: 'layers',   title: '端到端交付',     desc: '从数据库索引、接口设计，到页面像素和埋点告警，一个人能推完一条完整链路，不需要等人接棒。' },
-      { icon: 'zap',      title: '对度量有执念',   desc: '做 RAG 先建评测集，做性能先看 LCP 和 P99。首屏 3.8s → 1.1s、后端 P99 800ms → 90ms，都是先量化再动手的结果。' },
-      { icon: 'chat',     title: '技术翻译能力',   desc: '能把业务方模糊的需求拆成可执行的技术方案，也能把技术限制用产品听得懂的话讲清楚。最多同时协调过 3 个部门的接口对接。' },
-      { icon: 'book',     title: '乐于沉淀',       desc: '累计输出 60+ 篇内部技术文档，主导 20 余场内部分享。团队里新人的上手周期因此从 3 周缩到 1 周。' }
+    "intro": [
+      "我是杨旭阳，数字媒体技术专业在读。在校内带两个部门——AI 部（30 人）和摄像部（10 人），一边教同学怎么用 AI 做出自己的东西，一边负责校级活动的拍摄和剪辑。",
+      "我的路线比较特别：<strong>不是先学理论再动手，而是先做出东西再补原理。</strong>从 0 到 1 跑过 TK 账号的完整链路（策划、选题、创作、剪辑、发布），也在 AI 部带着同学从「认识 AI」一路走到能独立做出自己的 Agent。",
+      "现在想找一个能把 AI 真正用进业务的团队，实习或全职都可以。"
     ]
   },
-
-  /* ── 工作经历（倒序） ─────────────────────────────────────────────────── */
-  experience: [
+  "experience": [
     {
-      role: 'AI 应用负责人 / 高级全栈工程师',
-      company: '示例科技（AI 产品线）',
-      companyUrl: '',
-      period: '2023.03 — 至今',
-      location: '上海',
-      type: '全职',
-      points: [
-        '从 0 到 1 搭建企业知识库问答平台，覆盖 <b>2,300+ 内部用户</b>，日均问答量 <b>1.8 万次</b>，回答采纳率 <b>82%</b>。',
-        '主导 RAG 检索链路设计（混合检索 + 重排序 + 引用溯源），把「答非所问」比例从 <b>31% 降到 7%</b>。',
-        '设计 Agent 工作流引擎，把客服工单自动处理率从 <b>18% 提升到 64%</b>，年化节省人力成本约 <b>180 万元</b>。',
-        '建立 LLM 应用评测体系（黄金集 + 自动评分 + 线上 A/B），让每次 Prompt 改动的效果都可量化、可回滚。',
-        '带 8 人跨职能小组（4 研发 / 1 算法 / 2 产品 / 1 设计），负责排期、技术方案评审与线上稳定性。'
+      "role": "新媒体摄像部部长",
+      "company": "朔州陶瓷职业技术学院",
+      "companyUrl": "",
+      "period": "2026.06 — 至今",
+      "location": "山西",
+      "type": "校内任职",
+      "points": [
+        "独立带队完成校级下发的相关工作",
+        "负责各大活动的拍摄，剪辑工作",
+        "拍摄创意素材，在不同的场景会采用不同的运镜、转场"
       ],
-      tags: ['LLM 应用', 'RAG', 'Agent', 'TypeScript', 'Python', 'Kubernetes', '团队管理']
-    },
-    {
-      role: '高级前端工程师 → 全栈工程师',
-      company: '示例网络（金融科技）',
-      companyUrl: '',
-      period: '2021.06 — 2023.02',
-      location: '上海',
-      type: '全职',
-      points: [
-        '负责核心交易后台的前端架构升级，从 Vue2 迁移到 React 18 + TypeScript，累计重构 <b>140+ 页面</b>，线上 JS 报错下降 <b>76%</b>。',
-        '主导性能专项：首屏加载从 <b>3.8s 优化到 1.1s</b>（路由级代码分割 + 资源预加载 + 长列表虚拟化）。',
-        '从 0 搭建组件库与设计系统，被 <b>6 条业务线</b>复用，新页面平均开发工时下降约 <b>35%</b>。',
-        '独立完成 Node.js BFF 层开发，承接 30+ 接口聚合，把移动端首屏请求数从 <b>17 个降到 3 个</b>。'
-      ],
-      tags: ['React', 'TypeScript', 'Node.js', '性能优化', '设计系统', 'Vite']
-    },
-    {
-      role: '前端工程师',
-      company: '示例信息',
-      companyUrl: '',
-      period: '2019.07 — 2021.05',
-      location: '杭州',
-      type: '全职',
-      points: [
-        '参与 SaaS 管理后台开发，独立负责权限、报表、审批三个模块，服务 <b>500+ 企业客户</b>。',
-        '推动前端工程化改造：接入 ESLint / 单测 / CI 流水线，把发布前的回归时间从 <b>2 天压缩到 2 小时</b>。',
-        '开发数据可视化看板（ECharts 二次封装），支撑运营侧每日 <b>200+ 次</b>自主取数，不再依赖研发导数据。'
-      ],
-      tags: ['Vue', 'ECharts', 'Webpack', 'CI/CD', 'SaaS']
-    },
-    {
-      role: '前端开发实习生',
-      company: '示例软件',
-      companyUrl: '',
-      period: '2019.01 — 2019.06',
-      location: '杭州',
-      type: '实习',
-      points: [
-        '参与小程序商城开发，独立完成商品详情页与购物车模块，实习期结束获得转正推荐。'
-      ],
-      tags: ['小程序', 'JavaScript']
-    }
-  ],
-
-  /* ── 项目作品 ─────────────────────────────────────────────────────────── */
-  projects: [
-    {
-      id: 'kb-qa',
-      name: '企业知识库 AI 问答平台',
-      year: '2023 — 2024',
-      icon: 'sparkles',
-      category: 'AI 应用',
-      summary: '面向 2,300+ 内部员工的知识库问答系统，支持多格式文档解析、引用溯源与权限隔离。',
-      metric: '回答采纳率 82%',
-      desc: '把散落在 Confluence、飞书、PDF 和 Git 仓库里的知识统一接入，用混合检索 + 重排序 + 引用溯源的方式回答员工提问，替代了原来的「关键词搜索 + 人工翻文档」。',
-      highlights: [
-        '设计<b>混合检索</b>策略：BM25 关键词召回 + 向量语义召回并行，再用 Cross-Encoder 重排序，Top-5 命中率从 61% 提升到 89%。',
-        '实现<b>引用溯源</b>：每条回答都附带原文片段与文档链接，让用户能一键核对，显著降低「不敢信」的心理门槛。',
-        '解决<b>权限隔离</b>难题：检索阶段做 ACL 预过滤，确保员工不会通过提问拿到无权访问的文档，通过了安全团队渗透测试。',
-        '搭建<b>离线评测流水线</b>：480 条黄金问答集 + 自动评分，Prompt 或模型每次改动前后跑一遍，避免「感觉变好了」式的盲目上线。',
-        '成本控制：通过语义缓存 + 小模型分流，把单次问答成本降低 <b>63%</b>。'
-      ],
-      stack: ['TypeScript', 'React', 'Node.js', 'Python', 'PostgreSQL', 'pgvector', 'Redis', 'Kubernetes'],
-      // tags 是「概念关键词」：stack 写技术名，tags 写这件事本质上在做什么。
-      // AI 助手靠它把「RAG 做到什么程度」这类提问关联到本项目上。
-      tags: ['RAG', '检索增强', '混合检索', '重排序', '引用溯源', '向量检索', '知识库问答', '评测集'],
-      metrics: [
-        { k: '日均问答', v: '1.8 万' },
-        { k: '采纳率', v: '82%' },
-        { k: '命中率', v: '89%' },
-        { k: '成本下降', v: '63%' }
+      "tags": [
+        "拍摄",
+        "剪辑",
+        "策划"
       ]
     },
     {
-      id: 'agent-flow',
-      name: '客服工单 Agent 工作流',
-      year: '2024',
-      icon: 'workflow',
-      category: 'AI 应用',
-      summary: '让 Agent 自主查询订单、判断意图并执行退换货操作，把工单自动处理率从 18% 拉到 64%。',
-      metric: '年省人力约 180 万元',
-      desc: '传统客服机器人只能回答固定话术。这个项目让 Agent 真正具备「调用工具、查数据、做决策」的能力，在人工兜底的前提下自动闭环处理常见工单。',
-      highlights: [
-        '设计<b>工具调用协议</b>：把订单查询、物流追踪、退款申请等 14 个内部接口包装成结构化 Tool，带严格的参数校验与超时控制。',
-        '实现<b>分级兜底策略</b>：置信度低于阈值、或涉及金额超过 500 元的操作自动转人工，并附带 Agent 的推理过程供客服参考。',
-        '构建<b>可观测性</b>：每次 Agent 执行都记录完整 trace（思考链、工具调用、耗时），出问题能 5 分钟内定位到具体节点。',
-        '上线后自动处理率 <b>18% → 64%</b>，人工客服平均响应时长从 4.2 分钟降到 51 秒。'
+      "role": "校内AI部负责人",
+      "company": "朔州陶瓷职业技术学院",
+      "companyUrl": "",
+      "period": "2026.05 — 至今",
+      "location": "山西",
+      "type": "校内任职",
+      "points": [
+        "负责AI部门正常运转工作，从0到1去讲解AI",
+        "帮助小白从认识AI到项目落地的全流程",
+        "确保每位成员可以独立制作自己的Agent",
+        "带队参加各类比赛"
       ],
-      stack: ['Python', 'FastAPI', 'LangGraph', 'Redis', 'PostgreSQL', 'OpenTelemetry'],
-      tags: ['Agent', '智能体', '工具调用', '工作流编排', '客服', '工单', '兜底策略', '自动化'],
-      metrics: [
-        { k: '自动处理率', v: '64%' },
-        { k: '响应时长', v: '51 秒' },
-        { k: '接入工具', v: '14 个' }
+      "tags": [
+        "授课",
+        "竞赛",
+        "实战",
+        "网站",
+        "工具",
+        "RAG",
+        "Agent"
       ]
     },
     {
-      id: 'campaign',
-      name: '千万级曝光活动投放系统',
-      year: '2021 — 2022',
-      icon: 'rocket',
-      category: '前端工程',
-      summary: '支撑大促活动的可视化搭建与投放，峰值 QPS 1.2 万，首屏 1.1s。',
-      metric: '峰值 QPS 1.2 万',
-      desc: '运营侧需要在大促期间快速上线几十个活动页。这套系统把「写代码做活动页」变成「拖拽配置」，同时保证高并发下的首屏性能。',
-      highlights: [
-        '实现<b>可视化搭建器</b>：拖拽生成页面 JSON Schema，配合服务端渲染，运营自助上线一个活动页从 3 天缩短到 <b>2 小时</b>。',
-        '性能专项：路由级代码分割 + 关键资源预加载 + 图片响应式，首屏从 <b>3.8s → 1.1s</b>，LCP 达到 Good 标准。',
-        '压测与扩容：配合后端做全链路压测，通过 CDN 边缘缓存 + 静态化，平稳扛住 <b>1.2 万 QPS</b> 峰值。',
-        '沉淀<b>降级预案</b>：CDN 回源异常时自动切换到静态兜底页，整个大促期间零 P0 事故。'
+      "role": "全流程账号运营",
+      "company": "TK账号运营",
+      "companyUrl": "",
+      "period": "2025.05 — 2025.09",
+      "location": "山西",
+      "type": "全职",
+      "points": [
+        "从 0 到 1 运营TK账号，负责从策划-选题-创作-剪辑-发布整套流程",
+        "有丰富的热点对标经验，可以轻松实现爆款内容复刻",
+        "有丰富的剪辑经验，在工作期间能独立完美完成有难度的剪辑"
       ],
-      stack: ['React', 'TypeScript', 'Next.js', 'Node.js', 'Redis', 'CDN'],
-      tags: ['活动页', '可视化搭建', '低代码', '大促', '高并发', '首屏性能', 'SSR', '降级预案'],
-      metrics: [
-        { k: '峰值 QPS', v: '1.2 万' },
-        { k: '首屏', v: '1.1s' },
-        { k: '上线提速', v: '36 倍' }
-      ]
-    },
-    {
-      id: 'realtime-board',
-      name: '实时业务监控看板',
-      year: '2022',
-      icon: 'activity',
-      category: '全栈',
-      summary: 'WebSocket 推送的实时风控看板，50+ 指标秒级刷新，异常自动告警到飞书。',
-      metric: 'P99 延迟 90ms',
-      desc: '风控团队需要秒级掌握交易异常。原方案是每分钟轮询一次接口，既慢又压垮后端。改成 WebSocket 增量推送 + 后端重构后，延迟和稳定性都大幅改善。',
-      highlights: [
-        '后端把「每次全量计算」重构为<b>增量聚合</b>，P99 响应从 800ms 降到 <b>90ms</b>，数据库压力下降约 70%。',
-        '前端实现<b>虚拟化渲染</b> + 帧率控制，50 个图表同屏刷新依然稳定在 60fps，低端笔记本上也不卡。',
-        '设计<b>告警规则引擎</b>：支持组合条件与静默期，误报率从每天 30+ 条降到 3 条以内。'
-      ],
-      stack: ['React', 'ECharts', 'Node.js', 'WebSocket', 'Go', 'TimescaleDB'],
-      tags: ['实时推送', '数据看板', '可视化', '风控', '监控', '告警', '增量聚合', '长连接'],
-      metrics: [
-        { k: 'P99 延迟', v: '90ms' },
-        { k: '同屏图表', v: '50+' },
-        { k: '误报下降', v: '90%' }
-      ]
-    },
-    {
-      id: 'design-system',
-      name: '组件库与设计系统',
-      year: '2022 — 2023',
-      icon: 'grid',
-      category: '前端工程',
-      summary: '48 个组件 + 完整设计令牌，被 6 条业务线复用，新页面开发工时下降 35%。',
-      metric: '6 条业务线复用',
-      desc: '各业务线各写各的按钮和弹窗，视觉不一致、重复造轮子。这套设计系统统一了令牌、组件与文档，并配套了从设计稿到代码的规范流程。',
-      highlights: [
-        '抽象<b>三层设计令牌</b>（基础色 → 语义色 → 组件变量），换肤与暗色模式只需改一层变量。',
-        '48 个组件的<b>无障碍达标</b>：键盘可达、焦点可见、ARIA 标注完整，通过 axe 自动扫描零严重问题。',
-        '配套完善文档站 + 可视化回归测试，组件升级不再靠人肉检查有没有改坏样式。'
-      ],
-      stack: ['React', 'TypeScript', 'Rollup', 'Storybook', 'CSS Variables'],
-      tags: ['组件库', '设计系统', '设计令牌', '无障碍', '换肤', '可视化回归', '前端工程化'],
-      metrics: [
-        { k: '组件数', v: '48' },
-        { k: '复用业务线', v: '6' },
-        { k: '工时下降', v: '35%' }
-      ]
-    },
-    {
-      id: 'oss-cli',
-      name: '开源 CLI 工具',
-      year: '2023 — 至今',
-      icon: 'terminal',
-      category: '开源',
-      summary: '一个用于批量检查项目规范与依赖风险的命令行工具，GitHub 1.2k Star。',
-      metric: 'GitHub 1.2k Star',
-      desc: '团队里每次 review 都在重复提同样的规范问题，于是写了个 CLI 把这类检查自动化，后来开源出去被不少人用上了。',
-      highlights: [
-        '单命令完成<b>规范检查 + 依赖漏洞扫描 + 报告生成</b>，CI 集成后把 review 中的规范类评论减少约 70%。',
-        '插件化架构，社区已贡献 <b>9 个第三方规则包</b>。',
-        '零依赖实现（仅用 Node 内置模块），安装包体积 <b>不到 200KB</b>。'
-      ],
-      stack: ['Node.js', 'TypeScript', 'CLI', 'GitHub Actions'],
-      tags: ['开源', '命令行工具', '规范检查', '依赖扫描', 'CI 集成', '插件化'],
-      metrics: [
-        { k: 'Star', v: '1.2k' },
-        { k: '周下载', v: '3.4k' },
-        { k: '体积', v: '<200KB' }
+      "tags": [
+        "运营",
+        "剪辑",
+        "选题"
       ]
     }
   ],
-
-  /* ── 技能 ─────────────────────────────────────────────────────────────── */
-  skills: {
-    groups: [
+  "projects": [],
+  "skills": {
+    "groups": [
       {
-        name: 'AI / LLM 应用', icon: 'sparkles', ai: true,
-        items: [
-          { name: 'RAG 检索增强', level: 92, note: '生产级 · 混合检索/重排序/评测' },
-          { name: 'Agent 编排', level: 85, note: 'LangGraph · 工具调用 · 兜底策略' },
-          { name: 'Prompt 工程与评测', level: 88, note: '黄金集 · 自动评分 · A/B' },
-          { name: '向量库', level: 80, note: 'pgvector · Milvus · 索引调优' },
-          { name: '模型微调 / 部署', level: 65, note: 'LoRA · vLLM 推理服务' }
+        "name": "AI工具运用",
+        "icon": "sparkles",
+        "ai": true,
+        "items": [
+          {
+            "name": "AI可视化",
+            "level": 95,
+            "note": "AI生图，生视频，做IP等"
+          },
+          {
+            "name": "RAG 检索",
+            "level": 92,
+            "note": "可以做本地创建知识库以及被主流软件推荐"
+          },
+          {
+            "name": "定制Agent",
+            "level": 85,
+            "note": "为企业量身打造一个专属Agent"
+          },
+          {
+            "name": "模型本地部署",
+            "level": 80,
+            "note": "可在本地部署各类开源模型"
+          }
         ]
       },
       {
-        name: '前端', icon: 'layout',
-        items: [
-          { name: 'TypeScript', level: 93, note: '6 年 · 类型体操与工程配置' },
-          { name: 'React', level: 92, note: 'Hooks · 性能优化 · RSC' },
-          { name: 'Vue', level: 82, note: 'Vue2/3 迁移实战' },
-          { name: '前端性能优化', level: 90, note: 'LCP/INP 治理 · 首屏 3.8s→1.1s' },
-          { name: '设计系统 / 组件库', level: 86, note: '48 组件 · 令牌体系' }
-        ]
+        "name": "新媒体运营",
+        "icon": "layout",
+        "items": [
+          {
+            "name": "拍摄",
+            "level": 93,
+            "note": "负责校内活动拍摄"
+          },
+          {
+            "name": "剪辑",
+            "level": 92,
+            "note": "优质视频随地大小剪"
+          },
+          {
+            "name": "账号运营",
+            "level": 82,
+            "note": "根据不同发展方向的账号去定位垂直化的内容"
+          }
+        ],
+        "ai": false
       },
       {
-        name: '后端与服务', icon: 'server', ai: false,
-        items: [
-          { name: 'Node.js', level: 88, note: 'BFF · 高并发接口' },
-          { name: 'Python', level: 85, note: 'FastAPI · AI 侧主要语言' },
-          { name: 'Go', level: 70, note: '内部服务与数据处理' },
-          { name: 'PostgreSQL / Redis', level: 86, note: '索引优化 · 缓存设计' },
-          { name: '微服务与消息队列', level: 75, note: 'Kafka · 异步解耦' }
-        ]
-      },
-      {
-        name: '工程化与运维', icon: 'settings', ai: false,
-        items: [
-          { name: 'Docker / Kubernetes', level: 78, note: '部署 · 弹性伸缩' },
-          { name: 'CI/CD', level: 85, note: 'GitHub Actions · 灰度发布' },
-          { name: '可观测性', level: 80, note: 'OpenTelemetry · 告警治理' },
-          { name: '自动化测试', level: 76, note: '单测 · E2E · 可视化回归' }
+        "name": "综合管理能力",
+        "icon": "layers",
+        "ai": false,
+        "items": [
+          {
+            "name": "新媒体摄像部",
+            "level": 90,
+            "note": "负责校级下发的各种拍摄任务"
+          },
+          {
+            "name": "AI部门",
+            "level": 100,
+            "note": "引导部门成员自主研发原创可落地项目"
+          }
         ]
       }
     ],
-    cloud: ['TypeScript', 'React', 'Vue', 'Node.js', 'Python', 'Go', 'FastAPI', 'LangGraph',
-            'pgvector', 'Milvus', 'PostgreSQL', 'Redis', 'Kafka', 'Docker', 'Kubernetes',
-            'GitHub Actions', 'OpenTelemetry', 'Vite', 'Next.js', 'ECharts', 'Storybook',
-            'Playwright', 'Prompt 工程', 'RAG', 'Agent', '微调', 'vLLM']
+    "cloud": [
+      "AI",
+      "生图",
+      "生视频",
+      "Agent",
+      "RAG",
+      "IP定制",
+      "自媒体",
+      "运营",
+      "拍摄",
+      "剪辑",
+      "管理"
+    ]
   },
-
-  /* ── 教育与荣誉（type: edu | award | cert） ──────────────────────────── */
-  education: [
-    { type: 'edu', icon: 'cap',    title: '示例大学 · 计算机科学与技术', sub: '本科 · 工学学士', meta: '2015.09 — 2019.06 · GPA 3.7/4.0' },
-    { type: 'edu', icon: 'cap',    title: '示例大学 · 软件工程辅修',     sub: '辅修证书',        meta: '2017.09 — 2018.06' },
-    { type: 'award', icon: 'medal', title: 'ACM-ICPC 亚洲区域赛 铜奖',    sub: '团队赛 · 主力队员', meta: '2018' },
-    { type: 'award', icon: 'medal', title: '校级一等奖学金',              sub: '连续两年',        meta: '2016 — 2017' },
-    { type: 'cert', icon: 'badge',  title: 'AWS Certified Solutions Architect', sub: 'Associate', meta: '2023' },
-    { type: 'cert', icon: 'badge',  title: 'CKA · Kubernetes 管理员认证', sub: 'Certified Kubernetes Administrator', meta: '2024' }
+  "education": [
+    {
+      "type": "edu",
+      "icon": "cap",
+      "title": "朔州陶瓷职业技术学院",
+      "sub": "专科 · 数字媒体技术",
+      "meta": "2025.9 — 2028.6"
+    },
+    {
+      "type": "award",
+      "icon": "medal",
+      "title": "国家级奖学金",
+      "sub": "首次",
+      "meta": "2026学年"
+    }
   ],
-
-  /* ── 联系方式（action: copy 复制 | link 跳转） ────────────────────────── */
-  contact: [
-    { key: 'EMAIL',    value: 'hi@example.com',      action: 'copy',  icon: 'mail',    hint: '点击复制' },
-    { key: 'WECHAT',   value: 'chenyu_dev',          action: 'copy',  icon: 'chat',    hint: '点击复制' },
-    { key: 'PHONE',    value: '+86 138 0000 0000',   action: 'copy',  icon: 'phone',   hint: '点击复制' },
-    { key: 'GITHUB',   value: 'github.com/example',  action: 'link',  icon: 'github',  href: 'https://github.com/example' },
-    { key: 'BLOG',     value: 'example.com',         action: 'link',  icon: 'globe',   href: 'https://example.com' },
-    { key: 'LOCATION', value: '上海 · 接受远程',      action: 'none',  icon: 'pin' }
+  "contact": [
+    {
+      "key": "QQ邮箱",
+      "value": "y18234592566@qq.com",
+      "action": "copy",
+      "icon": "mail",
+      "hint": "点击复制"
+    },
+    {
+      "key": "谷歌邮箱",
+      "value": "yantingzhi@gmail.com",
+      "action": "copy",
+      "icon": "gmail",
+      "href": ""
+    },
+    {
+      "key": "微信",
+      "value": "Whyzpzn-Y1",
+      "action": "copy",
+      "icon": "chat",
+      "hint": "点击复制"
+    },
+    {
+      "key": "QQ",
+      "value": "2707839965",
+      "action": "copy",
+      "icon": "pin"
+    }
   ],
-
-  /* ── AI 助手的推荐问题 ───────────────────────────────────────────────── */
-  suggestions: [
-    '他最擅长的技术方向是什么？',
-    '有没有从 0 到 1 做过 AI 产品？',
-    '带过团队吗？管理规模多大？',
-    '6 年里最能拿得出手的成果是什么？',
-    'RAG 这块他到底做到什么程度？',
-    '期望薪资和到岗时间？',
-    '为什么想换工作？',
-    '英语水平怎么样？'
+  "suggestions": [
+    "他最擅长的 AI 工具是哪些？",
+    "有没有从 0 到 1 做过 AI 项目？",
+    "带过团队吗？管理规模多大？",
+    "AI 部负责人具体做什么？",
+    "RAG 和 Agent 他做到什么程度？",
+    "期望薪资和到岗时间？",
+    "他是学什么专业的？",
+    "英语水平怎么样？"
   ],
-
-  /* ── 常见问题标准答案 ────────────────────────────────────────────────────
-   *  AI 助手会优先匹配这里的答案，命中时准确度最高。
-   *  建议把 HR / 面试官最常问的问题都写进来。
-   * -------------------------------------------------------------------- */
-  faq: [
+  "faq": [
     {
-      q: '期望薪资是多少？',
-      a: '当前现金总包在 55 万左右，期望涨幅 20%–30%（约 65–72 万），具体会结合岗位职责、团队情况和期权结构谈。\n\n如果业务方向特别匹配、成长空间大，薪资上有一定弹性。'
+      "q": "期望薪资是多少？",
+      "a": "底薪 5k+，具体会结合岗位职责和团队情况谈。\n\n如果业务方向特别匹配、成长空间大，薪资上有一定弹性。"
     },
     {
-      q: '什么时候可以到岗？到岗时间',
-      a: '目前在职，按劳动法提前 30 天提出离职，预计 <b>4 周左右</b>可以到岗。\n\n如果岗位特别紧急，可以协商压缩交接期到 2–3 周。'
+      "q": "什么时候可以到岗？到岗时间",
+      "a": "2027 年 6 月后可随时到岗。"
     },
     {
-      q: '为什么想换工作？离职原因',
-      a: '主要有两点：\n\n- **成长空间**：当前团队的 AI 应用已经进入稳定迭代期，我想去啃更上游的难题，比如推理性能优化、多模态 Agent 这类还没被完全解决的问题。\n- **技术纵深**：我目前的角色偏「应用层集成」，希望下一份工作能在模型能力本身和工程架构的结合上走得更深。\n\n和现在的团队、领导关系都很好，离开纯粹是职业发展考虑。'
+      "q": "带过团队吗？管理经验、团队规模",
+      "a": "带过。校内担任两个职务：新媒体摄像部（10 人）和 AI 部负责人（30 人）。\n\n管理风格偏「技术带头 + 授权」：关键的地方我亲自上手示范，具体执行放手让成员做，出问题我兜底。"
     },
     {
-      q: '带过团队吗？管理经验、团队规模',
-      a: '带过。在现公司带 <b>8 人跨职能小组</b>（4 研发 / 1 算法 / 2 产品 / 1 设计），负责排期、技术方案评审和线上稳定性，持续时间约 1 年半。\n\n我的管理风格偏「技术带头 + 授权」：关键方案我会亲自参与设计评审，具体实现放手让成员做，出问题我兜底。团队里 2 位同学在这期间完成了晋升。\n\n也做过横向的跨团队协作，最多同时协调过 3 个部门的接口对接。'
+      "q": "英语水平怎么样？",
+      "a": "英语是我的短板，还在提升中。"
     },
     {
-      q: '英语水平怎么样？',
-      a: '读写没问题，能流畅阅读英文技术文档、RFC 和论文（平时读 LangChain、vLLM 的文档都是直接看原版）。\n\n口语属于「能开会讨论技术问题」的水平，做过几次和海外团队的英文需求沟通，但不算流利，复杂表达还需要准备。CET-6 已过。'
+      "q": "他最擅长的技术方向是什么？技术强项",
+      "a": "AI 工具的实际落地，具体是这几块：\n\n- **AI 可视化**：AI 生图、生视频、做 IP 形象\n- **RAG 检索**：能本地创建知识库\n- **定制 Agent**：给企业或个人做专属 Agent\n- **模型本地部署**：本地跑各类开源模型\n\n另外新媒体这块也熟：拍摄、剪辑、账号运营。特点是工具用得熟、能直接落地出东西。"
     },
     {
-      q: '他最擅长的技术方向是什么？技术强项',
-      a: '最核心的是 **LLM 应用工程化**——不是调 API 那种，而是把 RAG、Agent 这类系统做到生产可用：检索质量怎么量化、成本怎么压、出错怎么兜底、效果怎么评测。\n\n具体上：\n\n- **RAG 全链路**：混合检索 + 重排序 + 引用溯源，做过 480 条黄金集的离线评测体系\n- **Agent 编排**：工具调用协议设计、分级兜底、全链路可观测\n- **前端工程化**：TypeScript / React 深度使用，做过首屏 3.8s → 1.1s 的性能专项\n- **全栈交付**：Node.js / Python 后端 + PostgreSQL / Redis，能独立推完完整链路'
+      "q": "最有成就感的项目是什么？最大的成果",
+      "a": "AI 部。\n\n它不算一个技术项目，但是我认为自己做得最完整的一件事：从 0 到 1 把部门跑起来，给完全不懂 AI 的同学讲课，一路带到每个人能独立做出自己的 Agent，还带队参加各类比赛。\n\n比起自己做出一两个作品，能让 30 个人具备做出作品的能力，我觉得更值。"
     },
     {
-      q: '最有成就感的项目是什么？最大的成果',
-      a: '企业知识库问答平台。\n\n原因不是技术多炫，而是它真的改变了同事的工作方式——上线后日均 1.8 万次问答、82% 采纳率，很多人不再需要翻文档、问同事。\n\n过程中最有价值的部分是**建立了评测体系**：一开始团队只能靠「感觉」判断回答质量，我搭了 480 条黄金问答集 + 自动评分流水线，之后每次 Prompt 或模型改动都有明确的前后对比。这件事让「答非所问」从 31% 降到 7%，也让团队第一次能用数字讨论 AI 效果。'
+      "q": "职业规划是什么？未来想做什么",
+      "a": "目标很明确：带团队。\n\n短期想先成为团队里 AI 应用落地最靠谱的那个人——RAG、Agent、AI 工具集成这几块能独立扛下来。\n\n长期想做统筹策划方向，带更大规模的团队，把「想法 → 落地」这条链路管起来。"
     },
     {
-      q: '遇到过最大的技术挑战是什么？',
-      a: '知识库的**权限隔离**。\n\n最初版本是先检索再过滤权限，结果出现了一个尴尬情况：员工提问时，模型会「引用」一段他无权查看的文档内容——虽然不给原文，但信息已经泄露了。\n\n我们把方案改成**检索阶段就做 ACL 预过滤**：在向量检索的 SQL 层就带上权限条件，同时把文档切片的元数据里冗余一份权限标签，避免 join 带来的性能损耗。最终既通过了安全团队的渗透测试，检索延迟还只增加了 8ms。\n\n这件事让我意识到，AI 应用的安全边界不能靠 Prompt 约束，必须在数据链路层面解决。'
+      "q": "能接受远程办公吗？加班情况",
+      "a": "接受线上线下混合。"
     },
     {
-      q: '职业规划是什么？未来想做什么',
-      a: '短期（1–2 年）：成为团队里 **AI 应用架构** 的第一责任人，把 RAG、Agent、评测这三块做到行业里拿得出手的水平。\n\n中期（3–5 年）：往 **AI 基础设施与推理优化** 方向纵深，补上模型侧的能力（vLLM、量化、多模态），目标是能独立设计一个「从模型到产品」的完整技术方案。\n\n长期想做技术专家路线，而不是纯管理——带团队可以，但自己一定要还在写关键代码。'
+      "q": "优点和缺点是什么？",
+      "a": "**优点**：学习快、动手快，习惯先做出最小可用的东西再补原理，所以上手新工具比较快；同时带两个部门，协调和沟通还算擅长。\n\n**缺点**：理论底子不如科班扎实——我是靠做项目学起来的，遇到需要推导底层原理的场合会比较吃力，这块在补。英语也是短板。"
     },
     {
-      q: '能接受远程办公吗？加班情况',
-      a: '接受远程或混合办公。之前有过连续 8 个月每周 2 天远程的协作经验，靠文档和异步沟通推进，没有出现交付延误。\n\n关于加班：项目冲刺期（比如大促、重要版本上线）完全可以配合，之前大促连续两周高强度也扛过来了。但我不认同常态化 996——长期看产出反而更低，我更倾向用清晰的排期和优先级把事情在正常工作时间内做完。'
+      "q": "学历背景？哪个学校毕业的",
+      "a": "朔州陶瓷职业技术学院，数字媒体技术专业，专科，2025 年 9 月入学，预计 2028 年 6 月毕业。\n\n在校期间获得国家级奖学金。"
     },
     {
-      q: '优点和缺点是什么？',
-      a: '**优点**：一是端到端交付能力，从数据库到前端像素一个人能推完；二是对「度量」的执念，做任何优化都会先建指标体系，不喜欢拍脑袋。\n\n**缺点**：\n\n- 早期我容易在技术方案上「过度设计」，追求架构优雅而拖慢上线节奏。后来给自己定了个规矩——先跑通最小闭环，验证有价值再重构，情况好了很多。\n- 不太擅长在大会上做正式演讲，一对一或小组技术讨论很自然，但面对几百人的场合会紧张。这两年通过内部分享在刻意练习。'
-    },
-    {
-      q: '学历背景？哪个学校毕业的',
-      a: '示例大学（211）计算机科学与技术专业，本科，2019 年毕业，GPA 3.7/4.0，辅修软件工程。\n\n在校期间参加过 ACM-ICPC 亚洲区域赛拿到铜奖，连续两年拿校级一等奖学金。\n\n另外持有 AWS Solutions Architect Associate（2023）和 CKA Kubernetes 管理员认证（2024）。'
-    },
-    {
-      q: '他有什么技术之外的能力？软技能',
-      a: '比较突出的是 **跨职能沟通** 和 **技术翻译能力**——能把业务方模糊的需求拆成可执行的技术方案，也能把技术限制用产品听得懂的话讲清楚。\n\n具体表现：做过 3 次需求评审里的「反对派」，帮团队砍掉约 40% 的无效排期；累计输出 60+ 篇内部技术文档、主导 20 余场内部分享，新人上手周期从 3 周缩到 1 周。\n\n另外有一定的项目管理和排期能力，带 8 人小组时负责过完整的迭代节奏。'
+      "q": "他有什么技术之外的能力？软技能",
+      "a": "管理能力和高情商~"
     }
   ]
-};
+};;
 
 /* ============================================================================
  *  PART 0.5 · 站点数据装载
@@ -2203,13 +2180,6 @@ function termPS1() { return (PROFILE.meta.handle || 'resume') + '@resume:~$'; }
 /** ASCII 标语：内置几个已做好的名字，其它情况用框住的名字——
  *  绝不能把别人的名字画成大字挂在你的站点上。 */
 const BANNERS = {
-  chenyu:
-    ' ██████╗██╗  ██╗███████╗███╗   ██╗██╗   ██╗██╗   ██╗\n' +
-    '██╔════╝██║  ██║██╔════╝████╗  ██║╚██╗ ██╔╝██║   ██║\n' +
-    '██║     ███████║█████╗  ██╔██╗ ██║ ╚████╔╝ ██║   ██║\n' +
-    '██║     ██╔══██║██╔══╝  ██║╚██╗██║  ╚██╔╝  ██║   ██║\n' +
-    '╚██████╗██║  ██║███████╗██║ ╚████║   ██║   ╚██████╔╝\n' +
-    ' ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝   ╚═╝    ╚═════╝ '
 };
 function bannerFor(handle) {
   const h = String(handle || '').toLowerCase();
@@ -2369,7 +2339,7 @@ function initTerminal() {
     }
   });
 
-  // 提示符和标题也跟着简历主人走（之前写死了 chenyu@resume）
+  // 提示符和标题也跟着简历主人走，不要写死某个名字
   const ps1 = termPS1();
   const titleEl = $('#termTitle');
   if (titleEl) titleEl.textContent = (PROFILE.meta.handle || 'resume') + '@resume: ~ — zsh';
@@ -2515,7 +2485,7 @@ function countOcc(hay, needle) {
 const INTENTS = [
   { sec: 'skills',     re: /(技能|技术栈|擅长|会什么|会哪些|技术方向|技术水平|能力|前端|后端|工程化|架构|数据库|运维|测试|stack|skill|tech)/i, boost: 2.2 },
   { sec: 'experience', re: /(工作经历|履历|任职|在哪工作|哪家公司|跳槽|换过|几家公司|experience|career)/i, boost: 2.2 },
-  { sec: 'projects',   re: /(项目|作品|案例|做过|落地|product|project)/i, boost: 2.2 },
+  { sec: 'projects',   re: /(项目|作品|案例|代表作|做过|落地|product|project)/i, boost: 2.2 },
   { sec: 'education',  re: /(学历|学校|大学|毕业|教育|专业|学位|证书|奖学金|education|school|degree)/i, boost: 2.6 },
   { sec: 'contact',    re: /(联系|邮箱|微信|电话|怎么找|怎么联系|contact|email|wechat)/i, boost: 3.0 },
   { sec: 'about',      re: /(是谁|自我介绍|介绍一下|什么人|背景)/i, boost: 2.0 }
@@ -2666,46 +2636,76 @@ function ansGreeting() {
   };
 }
 
+/* 下面这些回答函数必须完全由 PROFILE 推导。
+   它们曾经写死了示例人设的整段叙述（编造的项目名、公司名、团队规模和性能数字）——
+   访客问一句「他会什么技能」，AI 就会拿这些编造的项目细节去回答招聘方。
+   这比答不上来严重得多。 */
+
 function ansSkills() {
-  const lines = PROFILE.skills.groups.map(g =>
-    '- **' + g.name + '**：' + g.items.map(i => i.name).join('、'));
+  const groups = (PROFILE.skills && PROFILE.skills.groups) || [];
+  const lines = groups.map(g => '- **' + g.name + '**：' + g.items.map(i => i.name).join('、'));
+  // 「最熟的方向」按该组平均熟练度算，不写死
+  const ranked = groups.map(g => ({
+    g, avg: g.items.reduce((s, i) => s + (Number(i.level) || 0), 0) / (g.items.length || 1)
+  })).sort((a, b) => b.avg - a.avg);
+  let tail = '';
+  if (ranked.length) {
+    const top = ranked[0].g;
+    const best = top.items.slice().sort((a, b) => (Number(b.level) || 0) - (Number(a.level) || 0))[0];
+    tail = '\n\n其中 **' + top.name + '** 是投入最多的一块' +
+      (best ? '，' + best.name + (best.note ? '（' + best.note + '）' : '') + ' 是里面最熟的' : '') + '。';
+  }
   return {
-    text: PROFILE.meta.nameZh + ' 的技术栈分成 ' + PROFILE.skills.groups.length + ' 块：\n\n' + lines.join('\n') +
-      '\n\n其中投入最深、也最有生产成果的是 **RAG 检索增强** 和 **Agent 编排**：在「企业知识库 AI 问答平台」里做了混合检索 + 重排序 + 引用溯源，回答采纳率 82%；在「客服工单 Agent 工作流」里设计了 14 个工具调用协议与分级兜底，把自动处理率从 18% 拉到 64%。\n\n' +
-      '前端方面有 6 年 TypeScript / React 实战，做过首屏 3.8s → 1.1s 的性能专项。',
-    cites: [cite('skills'), cite('projects')]
+    text: PROFILE.meta.nameZh + ' 的技能分成 ' + groups.length + ' 块：\n\n' + lines.join('\n') + tail,
+    cites: [cite('skills')]
   };
 }
 
 function ansExperience() {
-  const lines = PROFILE.experience.map(e =>
+  const exps = PROFILE.experience || [];
+  const lines = exps.map(e =>
     '- **' + e.period + '** · ' + e.role + ' @ ' + e.company + '（' + e.location + '）');
-  const total = PROFILE.stats[0];
+  const total = (PROFILE.stats || [])[0];
+  const latest = exps[0];
+  let tail = '';
+  if (latest && latest.points && latest.points.length) {
+    tail = '\n\n最近的一段是「' + latest.role + '」：' +
+      String(latest.points[0]).replace(/<[^>]+>/g, '');
+  }
   return {
-    text: PROFILE.meta.nameZh + ' 一共有 ' + (total ? total.num + total.suffix : '6 年') + '研发经验，' + PROFILE.experience.length + ' 段经历，按时间倒序：\n\n' +
-      lines.join('\n') +
-      '\n\n最近的「示例科技」是 AI 产品线，他在这里从 0 到 1 搭了企业知识库问答平台，并带 8 人跨职能小组。再往前在金融科技公司做核心交易后台的前端架构升级，更早是 SaaS 管理后台。\n\n' +
-      '详细职责和每条的量化结果可以在「02 经历」一节看到。',
+    text: PROFILE.meta.nameZh + ' 有 ' + exps.length + ' 段经历' +
+      (total ? '，' + total.num + total.suffix + ' ' + total.label : '') + '，按时间倒序：\n\n' +
+      lines.join('\n') + tail,
     cites: [cite('experience')]
   };
 }
 
 function ansProjects() {
-  const lines = PROFILE.projects.map(p =>
-    '- **' + p.name + '**（' + p.year + '，' + p.category + '）— ' + p.summary.replace(/。$/, '') + '，关键结果是 ' + p.metric);
+  const list = PROFILE.projects || [];
+  if (!list.length) {
+    return {
+      text: '这份简历目前还没有放项目作品。\n\n他的「工作经历」和「技能栈」里有具体内容，也可以直接联系本人：' + PROFILE.meta.email,
+      cites: [cite('experience'), cite('skills')],
+      weak: true
+    };
+  }
+  const lines = list.map(p =>
+    '- **' + p.name + '**（' + p.year + '，' + p.category + '）— ' +
+    String(p.summary || '').replace(/。$/, '') + '，关键结果是 ' + p.metric);
   return {
-    text: '他一共做了 ' + PROFILE.projects.length + ' 个代表作：\n\n' + lines.join('\n') +
-      '\n\n如果只看一个，我建议看**企业知识库 AI 问答平台**——那是技术难度、业务价值和量化结果都最完整的项目。\n\n' +
-      '点开「03 项目」里任意一张卡片，可以看到完整的技术方案、他在其中具体负责什么，以及每项指标的来龙去脉。',
+    text: '这份简历里列了 ' + list.length + ' 个项目：\n\n' + lines.join('\n') +
+      '\n\n如果只看一个，我建议从 **' + list[0].name + '** 开始。点开「03 项目」里的卡片能看到完整细节。',
     cites: [cite('projects')]
   };
 }
 
 function ansEducation() {
-  const lines = PROFILE.education.map(e => '- **' + e.title + '** · ' + e.sub + '（' + e.meta + '）');
+  const list = PROFILE.education || [];
+  const lines = list.map(e => '- **' + e.title + '** · ' + (e.sub || '') + '（' + (e.meta || '') + '）');
+  const edu = list.find(e => e.type === 'edu');
   return {
     text: '学历与荣誉情况：\n\n' + lines.join('\n') +
-      '\n\n本科是计算机科学与技术专业，2019 年毕业，GPA 3.7/4.0，在校期间拿过 ACM-ICPC 亚洲区域赛铜奖。工作后也持续在考认证，目前持有 AWS SAA 和 CKA。',
+      (edu ? '\n\n目前就读/毕业于 ' + edu.title + '，' + (edu.sub || '') + '。' : ''),
     cites: [cite('education')]
   };
 }
@@ -2773,16 +2773,29 @@ function ansSpecific(term) {
   return { text, cites: Array.from(new Set(docs.filter(d => d.sec !== 'faq').slice(0, 3).map(d => d.sec))).map(cite) };
 }
 
-/** 主观评估类问题（适不适合 / 值不值得）——摆事实，不替访客下结论 */
+/** 主观评估类问题（适不适合 / 值不值得）——摆简历里的事实，不替访客下结论。
+ *  曾经整段写死示例人设的性能与团队数字，等于替一个真人吹牛。 */
 function ansFit() {
+  const groups = (PROFILE.skills && PROFILE.skills.groups) || [];
+  const topSkills = [];
+  groups.forEach(g => g.items.slice(0, 2).forEach(i => topSkills.push(i.name)));
+
+  const metrics = (PROFILE.projects || []).map(p => p.metric).filter(Boolean);
+  const teamRoles = (PROFILE.experience || []).filter(e => /负责人|部长|主管|经理|lead/i.test(e.role || ''));
+  const weak = [];
+  groups.forEach(g => g.items.forEach(i => { if (Number(i.level) > 0 && Number(i.level) < 75) weak.push(i.name); }));
+
+  const bullets = [];
+  if (topSkills.length) bullets.push('- **能上手的方向**：' + topSkills.slice(0, 6).join('、'));
+  if (metrics.length) bullets.push('- **已写明的成果**：' + metrics.slice(0, 4).join('；'));
+  if (teamRoles.length) bullets.push('- **带团队的经历**：' + teamRoles.map(e => e.role + '（' + e.company + '）').join('；'));
+  if (weak.length) bullets.push('- **需要如实说明的短板**：' + weak.slice(0, 4).join('、') + ' 这几项熟练度相对较低');
+
   return {
-    text: '「合不合适」我不替你做判断，但可以把判断依据摆出来：\n\n' +
-      '- **能立刻上手的方向**：LLM 应用工程化（RAG / Agent / 评测体系）、TypeScript + React 前端、Node.js / Python 后端\n' +
-      '- **可验证的产出**：知识库问答日均 1.8 万次、采纳率 82%；Agent 工单自动处理率 18% → 64%；活动页首屏 3.8s → 1.1s；后端 P99 800ms → 90ms\n' +
-      '- **协作半径**：带过 8 人跨职能小组，也做过 3 个部门的横向协调，输出过 60+ 篇内部文档\n' +
-      '- **需要如实告知的短板**：模型训练与推理底层偏弱（微调/部署自评 65 分，vLLM 还在学）；大型场合正式演讲不是强项\n\n' +
-      '结论：如果岗位是「把 AI 能力做成能上线的产品」，匹配度很高；如果要求从零训练大模型或纯算法研究，他更偏应用侧，建议先聊一轮再判断。',
-    cites: [cite('skills'), cite('projects'), cite('ai')]
+    text: '「合不合适」我不替你做判断，但可以把简历里的依据摆出来：\n\n' +
+      (bullets.length ? bullets.join('\n') : '这份简历目前的信息还比较少，不足以判断。') +
+      '\n\n简历能说明的是「他做过什么」，说明不了「你们实际需要什么」——建议直接聊一轮，或者把 JD 发给他本人。',
+    cites: [cite('skills'), cite('experience')]
   };
 }
 
@@ -2900,13 +2913,14 @@ function localAnswer(q) {
 
   /* 并列提问：分别作答再合并。
      之前是「命中第一个就返回」，结果是「他做过什么项目，期望薪资多少？」
-     只答薪资、项目部分被静默丢掉——比答错更让人困惑。 */
+     只答薪资、项目部分被静默丢掉——比答错更让人困惑。
+     现在：能答的分点答；答不上的（比如简历里还没填项目）明确说出来，不装作没问过。 */
   const clauses = splitClauses(raw);
   if (clauses.length >= 2) {
-    const parts = [], allCites = [];
+    const parts = [], allCites = [], unanswered = [];
     for (const c of clauses) {
       const one = answerOne(c);
-      if (!one || one.weak) continue;
+      if (!one || one.weak) { unanswered.push(c); continue; }
       if (parts.some(p => p.text === one.text)) continue;   // 两段问到同一件事，不重复
       parts.push(one);
       allCites.push.apply(allCites, one.cites || []);
@@ -2914,8 +2928,16 @@ function localAnswer(q) {
     if (parts.length >= 2) {
       return {
         text: '你问了几件事，分开回答：\n\n' +
-          parts.map((p, i) => '**' + (i + 1) + '.** ' + p.text).join('\n\n'),
+          parts.map((p, i) => '**' + (i + 1) + '.** ' + p.text).join('\n\n') +
+          (unanswered.length ? '\n\n另外「' + unanswered.join('」「') + '」这部分，简历里目前没有可回答的内容。' : ''),
         cites: dedupeCites(allCites)
+      };
+    }
+    if (parts.length === 1 && unanswered.length) {
+      return {
+        text: parts[0].text + '\n\n另外你问到的「' + unanswered.join('」「') +
+          '」，简历里目前没有可回答的内容——不是回避，是确实还没写。',
+        cites: parts[0].cites
       };
     }
   }
@@ -3908,7 +3930,7 @@ const TABS = [
 
 const PANES = {
   basic: () => group('hash', '身份', grid(
-      fld('顶栏路径名 handle', 'meta.handle', { mono: true, ph: 'chenyu' }) +
+      fld('顶栏路径名 handle', 'meta.handle', { mono: true, ph: 'yourhandle' }) +
       fld('中文名', 'meta.nameZh', { req: true }) +
       fld('英文名', 'meta.nameEn', { ph: 'Yu Chen' }) +
       fld('状态徽章', 'meta.status', { ph: 'OPEN TO WORK · 可接受新机会' }) +
@@ -4431,6 +4453,7 @@ function buildExportHtml() {
   html = html.replace(/<title>[\s\S]*?<\/title>/, '<title>' + esc(title) + '</title>');
   const desc = SITE.cfg.description || PROFILE.meta.pitch.replace(/<[^>]+>/g, '');
   html = html.replace(/(<meta name="description" content=")[^"]*(")/, '$1' + esc(desc).replace(/\$/g, '$$$$') + '$2');
+  html = html.replace(/(<meta name="author" content=")[^"]*(")/, '$1' + esc(PROFILE.meta.nameZh) + '$2');
   html = html.replace(/(<meta property="og:title" content=")[^"]*(")/, '$1' + esc(title).replace(/\$/g, '$$$$') + '$2');
   html = html.replace(/(<meta name="twitter:title" content=")[^"]*(")/, '$1' + esc(title).replace(/\$/g, '$$$$') + '$2');
   html = html.replace(/(<meta property="og:description" content=")[^"]*(")/, '$1' + esc(desc).replace(/\$/g, '$$$$') + '$2');
