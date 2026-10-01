@@ -4,12 +4,14 @@ const vm = require('vm');
 const path = require('path');
 
 const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
-const lines = html.split(/\r?\n/);
-const s = lines.findIndex(l => l.trim() === '<script>');
-let e = -1;
-for (let i = lines.length - 1; i >= 0; i--) { if (lines[i].trim() === '</script>') { e = i; break; } }
-if (s < 0 || e < 0) { console.error('FAIL: 找不到内联脚本块'); process.exit(1); }
-const code = lines.slice(s + 1, e).join('\n');
+/* 用正则取主脚本块，不要按行匹配：
+   浏览器 outerHTML 重新序列化后，结尾会挤成 "</script></body></html>" 一行。 */
+const scriptMatch = html.match(/<script>\s*([\s\S]*?)\s*<\/script>/);
+if (!scriptMatch || !/DEFAULT_PROFILE/.test(scriptMatch[1])) {
+  console.error('FAIL: 找不到主脚本块，或匹配到了错误的 script 块');
+  process.exit(1);
+}
+const code = scriptMatch[1];
 
 /* ── 极简 DOM 桩：任何属性访问都返回可调用的自身 ─────────────────────── */
 function makeStub() {
@@ -47,6 +49,12 @@ documentStub.body = makeStub();
 documentStub.createElement = () => makeStub();
 documentStub.addEventListener = () => {};
 
+// 让 #siteData 返回 HTML 里真实的数据块。不特判的话 readBaked() 会静默回退到
+// DEFAULT_PROFILE，测试就一直在验证「文件里的示例数据」而不是真正生效的数据。
+const SD_MATCH = html.match(/<script type="application\/json" id="siteData">([\s\S]*?)<\/script>/);
+const SD_TEXT = SD_MATCH ? SD_MATCH[1] : '{}';
+documentStub.getElementById = id => (id === 'siteData' ? { textContent: SD_TEXT } : makeStub());
+
 const ctx = {
   console,
   setTimeout, clearTimeout, setInterval, clearInterval,
@@ -73,7 +81,7 @@ ctx.window.scrollTo = () => {};
 ctx.window.print = () => {};
 
 /* 导出内部符号以便断言 */
-const instrumented = code + '\n;globalThis.__T = { PROFILE, localAnswer, retrieve, tokenize, bestFaq, KB, esc, svg, ICON_PATHS, miniMd, ansFallback, buildKB, detectIntent, rich, linesToText, textToLines, findTerm };';
+const instrumented = code + '\n;globalThis.__T = { PROFILE, localAnswer, retrieve, tokenize, bestFaq, KB, esc, svg, ICON_PATHS, miniMd, ansFallback, buildKB, detectIntent, rich, linesToText, textToLines, findTerm, KNOWN_TERMS, ALIAS };';
 
 let failed = 0;
 const ok = (cond, msg) => { console.log((cond ? '  PASS  ' : '  FAIL  ') + msg); if (!cond) failed++; };
@@ -92,8 +100,9 @@ const P = T.PROFILE;
 
 console.log('\n=== 2. PROFILE 数据完整性 ===');
 ok(!!P && !!P.meta && !!P.projects, 'PROFILE 结构存在');
-// 数量不写死：内容是你自己的，测试只保证「结构成立、非空、互相一致」
-ok(Array.isArray(P.projects) && P.projects.length > 0, '项目数 = ' + P.projects.length);
+// 数量不写死：内容是你自己的，测试只保证「结构成立、非空、互相一致」。
+// projects 允许为空——空区块会被页面自动隐藏，不该判成错误。
+ok(Array.isArray(P.projects), '项目数 = ' + P.projects.length + (P.projects.length ? '' : '（空，区块会自动隐藏）'));
 ok(Array.isArray(P.experience) && P.experience.length > 0, '经历数 = ' + P.experience.length);
 ok(P.skills && P.skills.groups.length > 0, '技能组 = ' + P.skills.groups.length);
 
@@ -111,7 +120,11 @@ const badAnchor = P.contact.filter(c => c.action === 'link' && !c.href);
 ok(badAnchor.length === 0, '所有 link 类型联系方式都有 href');
 
 ok(P.faq.length >= 8, 'FAQ 条目数 = ' + P.faq.length);
-ok(P.faq.every(f => f.q && f.a && f.a.length > 20), '每条 FAQ 都有问答内容');
+ok(P.faq.every(f => f.q && f.a), '每条 FAQ 都有问题与答案');
+// 简短答案是合法的（「接受线上线下混合。」），但过短会让 AI 答得敷衍——提示而非判错
+const thinFaq = P.faq.filter(f => String(f.a).length < 15);
+if (thinFaq.length) console.log('  WARN  ' + thinFaq.length + ' 条 FAQ 答案偏短（<15 字），AI 引用时会显得敷衍：' +
+  thinFaq.map(f => f.q.slice(0, 12)).join('、'));
 ok(P.experience.every(x => x.points.length > 0 && x.period && x.role), '每段经历都有职位/时间/要点');
 ok(P.projects.every(x => x.highlights && x.highlights.length && x.metrics && x.metrics.length), '每个项目都有 highlights + metrics');
 
@@ -242,24 +255,42 @@ ok(/<strong>/.test(introHtml), '叙事段落里的 <strong> 生效');
 ok(!/<script|onerror=/i.test(introHtml), '叙事段落不会引入脚本');
 ok(T.esc('<img src=x onerror=alert(1)>') === '&lt;img src=x onerror=alert(1)&gt;', '危险字符被正确转义');
 
-console.log('\n=== 13. 技术词识别：短英文别名不能被当成子串命中 ===');
-const TERM_CASES = [
-  ['Kubernets 用过吗', 'Kubernetes', '拼错一个字母也能纠对（不能错答成 TypeScript）'],
-  ['Kuberneteees 用过吗', 'Kubernetes', '距离 2 以内仍然纠（容错边界之内）'],
-  ['Kubeflow 用过吗', null, '是另一个技术、距离太远，不硬纠'],
-  ['kubernetes 用过吗', 'Kubernetes', '正确拼写要能命中'],
-  ['ts 熟吗', 'TypeScript', '独立的 ts 应该命中 TypeScript'],
-  ['google analytics 用过吗', null, 'google 不该命中技能 Go'],
-  ['Go 写过吗', 'Go', '独立的 Go 要能命中'],
-  ['pg 调优做过吗', 'PostgreSQL', 'pg 应该映射到 PostgreSQL'],
-  ['向量数据库用过吗', 'pgvector', '中文别名要能命中'],
-  ['他做过什么项目', null, '没有技术词时不该乱匹配']
-];
-for (const [q, expect, why] of TERM_CASES) {
-  const got = T.findTerm(q);
-  const okCase = expect === null ? got === null : (got && got.toLowerCase() === expect.toLowerCase());
-  ok(okCase, '「' + q + '」→ ' + (got === null ? 'null' : got) + '（' + why + '）');
+console.log('\n=== 13. 技术词识别：从当前简历里取词，不写死 ===');
+// 这些用例必须跟着简历走：写死 "Kubernetes" 的话，换成一份不含 Kubernetes 的简历就全红，
+// 而那是数据变了、不是代码坏了。
+const LONG_TERMS = T.KNOWN_TERMS.filter(t => /^[A-Za-z][A-Za-z0-9 .+#_-]*$/.test(t) && t.length >= 5);
+if (!LONG_TERMS.length) {
+  console.log('  SKIP  当前简历没有 ≥5 字符的英文技术词');
+} else {
+  const t0 = LONG_TERMS[0];
+  const exact = T.findTerm(t0 + ' 用过吗');
+  ok(exact === t0, '正确拼写命中：「' + t0 + '」→ ' + exact);
+
+  // 少一个字母：应当靠拼写容错纠正
+  const typo = t0.slice(0, -1);
+  const fixed = T.findTerm(typo + ' 用过吗');
+  ok(fixed === t0, '少一个字母能纠回：「' + typo + '」→ ' + (fixed || 'null'));
+
+  // 完全不相干的词：不该乱匹配
+  ok(T.findTerm('Zzqwerty 用过吗') === null, '不存在的词返回 null，不硬猜');
+  ok(T.findTerm('他做过什么项目') === null, '没有技术词时不该乱匹配');
 }
+
+// 短别名（ts / js / pg）不能作为长单词的子串被误命中，
+// 否则 "kuberne(ts)" 会被当成 TypeScript。
+const SHORT_ALIASES = Object.keys(T.ALIAS).filter(k => /^[a-z0-9]{2,3}$/.test(k));
+SHORT_ALIASES.slice(0, 4).forEach(a => {
+  const probe = 'kuberne' + a + ' 用过吗';
+  const got = T.findTerm(probe);
+  ok(got !== T.ALIAS[a], '短别名 「' + a + '」不会在长单词内部误命中（' + probe.trim() + ' → ' + (got || 'null') + '）');
+});
+
+// 独立的短别名仍然要能命中
+const aliasKeys = Object.keys(T.ALIAS).filter(k => /^[a-z0-9]{2,3}$/.test(k)).slice(0, 3);
+aliasKeys.forEach(a => {
+  const got = T.findTerm(a + ' 熟吗');
+  ok(got === T.ALIAS[a], '独立的 「' + a + '」正常命中 → ' + (got || 'null'));
+});
 
 console.log('\n=== 14. 并列提问要分别作答，不能只答一半 ===');
 const MULTI = [

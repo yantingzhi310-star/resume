@@ -46,11 +46,14 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       document.querySelectorAll('.proj__name,.tl__role,.stat__num,.sec-title,.hero__name,.cbox__v,.cmd__t,.metric__v,.skill__name').forEach(e => {
         if (e.scrollWidth > e.clientWidth + 2) clipped.push(e.className + ':' + e.textContent.trim().slice(0,20));
       });
+      // 空的列表区块会被页面自动隐藏（内容还没填完时），这不算缺陷。
+      // 只统计「可见却为空」的容器，以及「可见却没触发入场动画」的元素。
+      const shown = e => e.getClientRects().length > 0;
       const empty = [];
       document.querySelectorAll('#heroStats,#timeline,#projGrid,#skillsGrid,#eduGrid,#contactGrid,#traits,#aiSugg,#filters').forEach(e => {
-        if (e.children.length === 0) empty.push(e.id);
+        if (e.children.length === 0 && shown(e)) empty.push(e.id);
       });
-      const hidden = Array.from(document.querySelectorAll('.reveal')).filter(e => !e.classList.contains('is-in')).length;
+      const hidden = Array.from(document.querySelectorAll('.reveal')).filter(e => shown(e) && !e.classList.contains('is-in')).length;
       const tiny = Array.from(document.querySelectorAll('button')).filter(b => { const r=b.getBoundingClientRect(); return r.width>0 && (r.height<32||r.width<32); }).length;
       return { docW, scrollW: document.documentElement.scrollWidth, bodyH: document.body.scrollHeight,
                overflow: overflow.slice(0,5), clipped: clipped.slice(0,5), empty, hidden, tiny,

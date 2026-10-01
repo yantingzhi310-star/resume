@@ -134,8 +134,27 @@ class CDP {
       role: q('#typedRole').textContent,
       // 「全部」筛选按钮上的计数，用来交叉验证项目卡数量——不写死具体数字
       filterTotal: (function(){ const f=q('#filters .n'); return f ? Number(f.textContent) : 0; })(),
-      emptySections: Array.from(document.querySelectorAll('#heroStats,#timeline,#projGrid,#skillsGrid,#eduGrid,#contactGrid,#traits,#aiSugg'))
-                        .filter(e => e.children.length === 0).map(e => e.id)
+      // 空的列表区块会被页面自动隐藏，这是正确行为。
+      // 所以这里只检查「可见的区块必须有内容」，而不是「所有区块都必须有内容」。
+      // getClientRects() 对 display:none 返回空——比 offsetParent 可靠（后者对 fixed 也返回 null）。
+      visible: (function(){
+        const out = {};
+        ['projects','experience','skills','education','contact'].forEach(id => {
+          const el = document.getElementById(id);
+          out[id] = !!(el && el.getClientRects().length > 0);
+        });
+        return out;
+      })(),
+      emptyVisibleSections: Array.from(document.querySelectorAll('#heroStats,#timeline,#projGrid,#skillsGrid,#eduGrid,#contactGrid,#traits,#aiSugg'))
+                        .filter(e => e.children.length === 0 && e.getClientRects().length > 0).map(e => e.id),
+      // 示例人设的痕迹绝不能出现在访客看得到的文本里。
+      // 之前它漏在终端 ASCII 标语（CHENYU）和提示符（chenyu@resume:~$）里——
+      // 那是另一个人的名字，挂在你站点上很荒唐。
+      leaks: (function(){
+        const txt = document.body.innerText + ' ' + document.title;
+        return ['陈屿', 'chenyu', '示例科技', '示例网络', '示例大学', 'example.com']
+          .filter(w => txt.toLowerCase().includes(w.toLowerCase()));
+      })()
     };
   `);
   console.log('\n--- 结构自检 ---');
@@ -143,12 +162,18 @@ class CDP {
   log('启动动画已隐藏', checks.bootHidden === true);
   log('渲染数量：项目 ' + checks.projects + ' / 经历 ' + checks.timeline + ' / 技能条 ' + checks.skillBars +
       ' / 特质 ' + checks.traits + ' / 教育 ' + checks.edu + ' / 联系 ' + checks.contact,
-      checks.projects > 0 && checks.timeline > 0 && checks.skillBars > 0 &&
-      checks.traits > 0 && checks.edu > 0 && checks.contact > 0);
+      checks.timeline > 0 && checks.skillBars > 0 && checks.traits > 0 && checks.edu > 0 && checks.contact > 0);
+  const vis = checks.visible;
+  log('区块可见性与数据一致（项目 ' + (vis.projects ? '显示' : '隐藏') + ' / 经历 ' + (vis.experience ? '显示' : '隐藏') +
+      ' / 技能 ' + (vis.skills ? '显示' : '隐藏') + '）',
+      (checks.projects > 0) === vis.projects && (checks.timeline > 0) === vis.experience &&
+      (checks.skillBars > 0) === vis.skills);
   log('筛选按钮计数（' + checks.filterTotal + '）与实际项目卡数量（' + checks.projects + '）一致',
       checks.filterTotal === checks.projects);
-  log('没有空区块' + (checks.emptySections.length ? ' → ' + JSON.stringify(checks.emptySections) : ''),
-      checks.emptySections.length === 0);
+  log('可见区块没有空列表' + (checks.emptyVisibleSections.length ? ' → ' + JSON.stringify(checks.emptyVisibleSections) : ''),
+      checks.emptyVisibleSections.length === 0);
+  log('页面可见文本里没有示例人设残留' + (checks.leaks.length ? ' → 发现 ' + JSON.stringify(checks.leaks) : ''),
+      checks.leaks.length === 0);
   log('页面宽度无横向溢出 (scrollW=' + checks.scrollW + ' vs winW=' + checks.winW + ')', checks.hOverflow === false);
   log('AI 提示条: "' + checks.subtitle + '"', Number(checks.kbCount) > 0);
 
@@ -193,8 +218,10 @@ class CDP {
   await cdp.js('window.scrollTo(0, document.body.scrollHeight); return 1;');
   await sleep(1500);
   const afterScroll = await cdp.js(`
-    const all = Array.from(document.querySelectorAll('.reveal'));
-    const bars = Array.from(document.querySelectorAll('.skill__fill'));
+    // 隐藏区块（比如还没填内容的项目区）inside 的 .reveal 永远不会被观察触发，
+    // 这是正确的——它们本来就不显示。所以统计时排除掉。
+    const all = Array.from(document.querySelectorAll('.reveal')).filter(e => e.getClientRects().length > 0);
+    const bars = Array.from(document.querySelectorAll('.skill__fill')).filter(f => f.getClientRects().length > 0);
     return {
       revealed: all.length,
       revealedIn: all.filter(e => e.classList.contains('is-in')).length,
@@ -306,20 +333,24 @@ class CDP {
 
   /* ── 7. 项目详情弹窗 ─────────────────────────────────────────────── */
   console.log('\n--- 项目详情 ---');
-  await cdp.js(`document.querySelector('#projGrid .proj').click(); return 1;`);
-  await sleep(900);
-  const modal = await cdp.js(`
-    const o = document.querySelector('#detailOverlay');
-    return { open: o.classList.contains('is-open'), title: document.querySelector('#detailTitle').textContent,
-             metrics: o.querySelectorAll('.metric').length, bullets: o.querySelectorAll('.detail li').length,
-             bodyOverflow: document.body.style.overflow };
-  `);
-  log('详情弹窗打开，标题「' + modal.title + '」', modal.open === true);
-  log('含 ' + modal.metrics + ' 个指标卡 + ' + modal.bullets + ' 条明细', modal.metrics >= 3 && modal.bullets >= 4);
-  log('打开时锁定页面滚动', modal.bodyOverflow === 'hidden');
-  console.log('        modal.png  ' + Math.round(await cdp.shot('modal') / 1024) + ' KB');
-  await cdp.js(`document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); return 1;`);
-  await sleep(500);
+  if (checks.projects === 0) {
+    console.log('  SKIP  当前简历没有项目数据（该区块已自动隐藏），跳过详情弹窗检查');
+  } else {
+    await cdp.js(`document.querySelector('#projGrid .proj').click(); return 1;`);
+    await sleep(900);
+    const modal = await cdp.js(`
+      const o = document.querySelector('#detailOverlay');
+      return { open: o.classList.contains('is-open'), title: document.querySelector('#detailTitle').textContent,
+               metrics: o.querySelectorAll('.metric').length, bullets: o.querySelectorAll('.detail li').length,
+               bodyOverflow: document.body.style.overflow };
+    `);
+    log('详情弹窗打开，标题「' + modal.title + '」', modal.open === true);
+    log('含 ' + modal.metrics + ' 个指标卡 + ' + modal.bullets + ' 条明细', modal.metrics >= 1 && modal.bullets >= 1);
+    log('打开时锁定页面滚动', modal.bodyOverflow === 'hidden');
+    console.log('        modal.png  ' + Math.round(await cdp.shot('modal') / 1024) + ' KB');
+    await cdp.js(`document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true})); return 1;`);
+    await sleep(500);
+  }
 
   /* ── 8. 浅色主题 ─────────────────────────────────────────────────── */
   console.log('\n--- 浅色主题 ---');

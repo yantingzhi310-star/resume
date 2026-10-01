@@ -25,11 +25,14 @@ const head = t => console.log('\n\x1b[1m' + t + '\x1b[0m');
 /* ── 用和 _test.cjs 相同的方式，在 Node 里把站点跑起来读出真实数据 ────── */
 function loadProfile() {
   const html = fs.readFileSync(HTML, 'utf8');
-  const lines = html.split(/\r?\n/);
-  const s = lines.findIndex(l => l.trim() === '<script>');
-  let e = -1;
-  for (let i = lines.length - 1; i >= 0; i--) { if (lines[i].trim() === '</script>') { e = i; break; } }
-  const code = lines.slice(s + 1, e).join('\n');
+
+  /* 用正则取主脚本块，不要按行匹配。
+     浏览器 outerHTML 重新序列化后结尾会变成 "</script></body></html>" 挤在同一行，
+     按行匹配 </script> 会命中前面 JSON-LD 的那个，提取出负长度垃圾。 */
+  const m = html.match(/<script>\s*([\s\S]*?)\s*<\/script>/);
+  if (!m) throw new Error('找不到主脚本块 <script>…</script>');
+  const code = m[1];
+  if (!/DEFAULT_PROFILE/.test(code)) throw new Error('提取到的脚本块里没有 DEFAULT_PROFILE，可能匹配错了块');
 
   function makeStub() {
     const store = new Map();
@@ -55,6 +58,14 @@ function loadProfile() {
   doc.readyState = 'complete';
   doc.createElement = () => makeStub();
   doc.addEventListener = () => {};
+
+  /* 关键：让 #siteData 返回 HTML 里真实的数据块。
+     桩里如果不特判，readBaked() 会 JSON.parse 失败并静默回退到 DEFAULT_PROFILE，
+     于是自检一直在检查「文件里的示例数据」，而不是真正会上线的烘焙数据——
+     烘焙了真实内容也照样报「姓名仍是陈屿」，把自己卡死。 */
+  const sdMatch = html.match(/<script type="application\/json" id="siteData">([\s\S]*?)<\/script>/);
+  const sdText = sdMatch ? sdMatch[1] : '{}';
+  doc.getElementById = id => (id === 'siteData' ? { textContent: sdText } : makeStub());
 
   // 屏蔽站点脚本自己的 console 输出，否则自检结果会被渲染日志淹没
   const silent = { log() {}, info() {}, warn() {}, error() {}, debug() {}, trace() {} };
@@ -107,16 +118,24 @@ try { X = loadProfile(); }
 catch (err) { bad('读取站点数据失败：' + err.message); process.exit(1); }
 
 const P = X.P;
-const text = X.html;
+const text = X.html;           // 静态 meta / 结构化数据要从原始 HTML 里读
+/* 只看「生效中」的数据，不要去扫整个 HTML 文本。
+   文件里的 DEFAULT_PROFILE 是兜底示例，永远含 example.com；
+   拿整份 HTML 去匹配会把兜底数据当成线上内容，永远误报。 */
+const pText = JSON.stringify(P);
 const placeholders = [];
 
-if (P.meta.nameZh === '陈屿') placeholders.push('姓名仍是示例人设「陈屿」');
-if (/example\.com/i.test(text)) placeholders.push('仍含 example.com 占位邮箱 / 网址：' +
-  (text.match(/[\w.+-]*@example\.com|https?:\/\/example\.com[^\s"']*/i) || [''])[0]);
+if (P.meta.nameZh === '陈屿') {
+  const strong = P.experience.some(e => /^示例/.test(e.company || '')) || /示例大学/.test(JSON.stringify(P.education || []));
+  if (strong) placeholders.push('姓名仍是示例人设「陈屿」');
+  else warn('姓名恰好是「陈屿」——如果这是你的真名请忽略（示例人设用的也是这个名字）');
+}
+if (/example\.com/i.test(pText)) placeholders.push('仍含 example.com 占位邮箱 / 网址：' +
+  (pText.match(/[\w.+-]*@example\.com|https?:\/\/(?:www\.)?example\.com[^\s"',]*/i) || [''])[0]);
 if (P.experience.some(e => /^示例/.test(e.company || ''))) placeholders.push('公司名仍是「示例…」（' +
   P.experience.filter(e => /^示例/.test(e.company || '')).map(e => e.company).join('、') + '）');
 if (/示例大学|示例科技/.test(JSON.stringify(P.education || []))) placeholders.push('教育经历仍是「示例大学」');
-if (P.projects.some(p => /新项目|全新项目名/.test(p.name || ''))) placeholders.push('存在未改名的测试项目');
+if ((P.projects || []).some(p => /新项目|全新项目名/.test(p.name || ''))) placeholders.push('存在未改名的测试项目');
 
 if (placeholders.length) {
   placeholders.forEach(p => bad(p));

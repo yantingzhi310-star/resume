@@ -42,17 +42,23 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
   console.log('\n=== 1. 环境与入口 ===');
 
   const env = await js(`
-    const sd = JSON.parse((document.querySelector('#siteData').textContent || '{}').trim() || '{}');
+    let sd = {}, parses = true;
+    try { sd = JSON.parse((document.querySelector('#siteData').textContent || '{}').trim() || '{}'); }
+    catch (e) { parses = false; }
     return { subtle: !!(window.crypto && window.crypto.subtle),
              secure: window.isSecureContext,
              entry: !!document.querySelector('#adminEntry'),
              panelHidden: document.querySelector('#adminPanel').hidden,
+             siteDataParses: parses,
              siteDataHasProfile: !!sd.profile,
+             bakedName: sd.profile ? sd.profile.meta.nameZh : '',
              siteDataCfg: sd.cfg ? Object.keys(sd.cfg).join(',') : '' };
   `);
   check(env.subtle, 'file:// 下 WebCrypto 可用（PBKDF2 密码哈希的前提）');
-  check(!env.siteDataHasProfile, '初始状态没有烘焙简历内容（用文件里的默认值）' +
-    (env.siteDataCfg ? '，但有站点级配置：' + env.siteDataCfg : ''));
+  // 烘焙内容与否都合法：空 → 用文件里的默认值；有 → 用烘焙的（真实简历）
+  check(env.siteDataParses, 'siteData 数据块可解析：' +
+    (env.siteDataHasProfile ? '已烘焙简历（' + env.bakedName + '）' : '空，使用文件默认值') +
+    (env.siteDataCfg ? ' · 站点配置 ' + env.siteDataCfg : ''));
   check(env.entry && env.panelHidden, '页脚有「管理」入口，面板默认隐藏');
 
   console.log('\n=== 2. 首次进入：设置密码 ===');
@@ -149,6 +155,17 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
   console.log('\n=== 6. 项目编辑与 AI 知识库联动 ===');
   await js(`document.querySelector('[data-tab="proj"]').click(); return 1;`);
   await sleep(400);
+
+  // 简历里可能还没有项目（该区块会自动隐藏）。先通过面板新增一个——
+  // 这样既让后续断言成立，也顺带测了「新增项目」这条路径。
+  const projCount0 = await js(`return document.querySelectorAll('#projGrid .proj').length`);
+  if (projCount0 === 0) {
+    await js(`document.querySelector('[data-act="add"][data-list="projects"]').click(); return 1;`);
+    await sleep(1200);
+    const projCount1 = await js(`return document.querySelectorAll('#projGrid .proj').length`);
+    check(projCount1 === 1, '原本没有项目 → 通过管理面板新增成功，区块自动显示');
+  }
+
   await js(`const el=document.querySelector('[data-path="projects.0.name"]');
             el.value='全新项目名'; el.dispatchEvent(new Event('input',{bubbles:true})); return 1;`);
   await sleep(900);
@@ -204,7 +221,7 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
     if (ld) {
       check(ld.name === '张伟', '导出的结构化数据已跟随内容重建：name = ' + ld.name);
       check(/^mailto:/.test(ld.email || ''), '结构化数据邮箱格式正确：' + ld.email);
-      check(!/陈屿/.test(lde[1]), '原来的硬编码姓名「陈屿」已从结构化数据里消失');
+      check(ld.name !== env.bakedName && !!env.bakedName, '导出前的姓名（' + env.bakedName + '）已被新内容替换');
       check(ld['@type'] === 'Person' && !!ld['@context'], '结构化数据保留了 @context / @type');
       const undef = /:\s*undefined/.test(lde[1]);
       check(!undef, '结构化数据里没有 undefined 字段泄漏');
