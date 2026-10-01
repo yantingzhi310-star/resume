@@ -206,10 +206,13 @@ if (baked && baked.key) {
   ok('页面里没有烘焙 API Key（AI 助手走本地检索模式，或由访客自己填）');
 }
 if (X.SITE && X.SITE.admin && X.SITE.admin.hash) {
-  warn('管理员密码哈希已烘焙进页面');
-  console.log('      → 哈希本身不泄露密码，但它公开可离线爆破。请确保管理员密码足够长、不复用。');
+  ok('管理员密码已烘焙进页面（访客看到登录框，页面内不可修改）');
+  console.log('      → 哈希是公开的，可被离线暴力破解，所以密码长度是关键。');
+  console.log('        换密码：node _set-admin-password.cjs "新密码" --bake');
 } else {
-  ok('没有烘焙管理员凭据（首次访问时自行设置）');
+  warn('页面里没有固定的管理员密码');
+  console.log('      → 每个访客点「管理」都会看到「请设置管理员密码」。');
+  console.log('        要固定一个：node _set-admin-password.cjs --bake');
 }
 
 /* ── 5. 发布产物体积 ─────────────────────────────────────────────────── */

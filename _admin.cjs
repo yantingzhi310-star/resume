@@ -52,6 +52,8 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
              siteDataParses: parses,
              siteDataHasProfile: !!sd.profile,
              bakedName: sd.profile ? sd.profile.meta.nameZh : '',
+             bakedAdmin: !!(sd.admin && sd.admin.hash && sd.admin.salt),
+             bakedIter: sd.admin ? sd.admin.iter : 0,
              siteDataCfg: sd.cfg ? Object.keys(sd.cfg).join(',') : '' };
   `);
   check(env.subtle, 'file:// 下 WebCrypto 可用（PBKDF2 密码哈希的前提）');
@@ -61,51 +63,133 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
     (env.siteDataCfg ? ' · 站点配置 ' + env.siteDataCfg : ''));
   check(env.entry && env.panelHidden, '页脚有「管理」入口，面板默认隐藏');
 
-  console.log('\n=== 2. 首次进入：设置密码 ===');
+  /* 管理员密码有两种状态，测试必须都能跑：
+       ① 未烘焙 → 首次进入走「设置密码」流程（本地密码，可改）
+       ② 已烘焙 → 首次进入走「登录」流程（站点固定密码，页面内不可改）
+     已烘焙时需要一个已知密码，用环境变量传入：ADMIN_PWD=xxx node _admin.cjs */
+  const PWD = process.env.ADMIN_PWD || 'test1234';
+  const PWDJS = JSON.stringify(PWD);   // 注入到页面脚本里时的字面量形式
+  const BAKED = env.bakedAdmin;
+
+  console.log('\n=== 2. 进入管理面板（' + (BAKED ? '已烘焙固定密码' : '未烘焙 → 走设置流程') + '）===');
   await js(`document.querySelector('#adminEntry').click(); return 1;`);
   await sleep(600);
   const l0 = await js(`return { open: document.querySelector('#adminLoginOverlay').classList.contains('is-open'),
                                setup: document.querySelector('#adminPwd2Field').style.display !== 'none',
                                title: document.querySelector('#adminLoginTitle').textContent };`);
-  check(l0.open && l0.setup && /设置/.test(l0.title), '首次进入走「设置密码」流程：' + l0.title);
+  check(l0.open, '点「管理」弹出登录层');
 
-  await js(`document.querySelector('#adminPwd').value='123'; document.querySelector('#adminPwd2').value='123';
-            document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
-  await sleep(500);
-  const weak = await js(`return document.querySelector('#adminLoginMsg').textContent`);
-  check(/至少 6 位/.test(weak), '拒绝过短密码：' + weak.trim());
+  if (BAKED) {
+    check(!l0.setup && /登录/.test(l0.title),
+      '已固定密码时走「登录」而不是「设置」：' + l0.title + '（访客不会看到「请设置密码」）');
+    if (!process.env.ADMIN_PWD) {
+      console.log('  SKIP  未提供 ADMIN_PWD 环境变量，跳过需要登录的后续检查');
+      console.log('       用法：ADMIN_PWD="你的密码" node _admin.cjs');
+      ws.close();
+      process.exit(0);
+    }
+    await js(`document.querySelector('#adminPwd').value='definitely-wrong';
+              document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
+    await sleep(4500);
+    const wrong = await js(`return { msg: document.querySelector('#adminLoginMsg').textContent,
+                                     panel: document.querySelector('#adminPanel').hidden };`);
+    check(/密码错误/.test(wrong.msg) && wrong.panel, '错误密码被拒绝且未解锁：' + wrong.msg.trim());
+    await js(`document.querySelector('#adminPwd').value=${JSON.stringify(PWD)};
+              document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
+    await sleep(4500);
+  } else {
+    check(l0.setup && /设置/.test(l0.title), '未烘焙时走「设置密码」流程：' + l0.title);
 
-  await js(`document.querySelector('#adminPwd').value='test1234'; document.querySelector('#adminPwd2').value='test9999';
-            document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
-  await sleep(500);
-  const mismatch = await js(`return document.querySelector('#adminLoginMsg').textContent`);
-  check(/不一致/.test(mismatch), '拒绝两次不一致：' + mismatch.trim());
+    await js(`document.querySelector('#adminPwd').value='123'; document.querySelector('#adminPwd2').value='123';
+              document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
+    await sleep(500);
+    const weak = await js(`return document.querySelector('#adminLoginMsg').textContent`);
+    check(/至少 6 位/.test(weak), '拒绝过短密码：' + weak.trim());
 
-  const t0 = Date.now();
-  await js(`document.querySelector('#adminPwd').value='test1234'; document.querySelector('#adminPwd2').value='test1234';
-            document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
-  await sleep(2500);
-  const hashMs = Date.now() - t0;
+    await js(`document.querySelector('#adminPwd').value='test1234'; document.querySelector('#adminPwd2').value='test9999';
+              document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
+    await sleep(500);
+    const mismatch = await js(`return document.querySelector('#adminLoginMsg').textContent`);
+    check(/不一致/.test(mismatch), '拒绝两次不一致：' + mismatch.trim());
+
+    await js(`document.querySelector('#adminPwd').value=${JSON.stringify(PWD)}; document.querySelector('#adminPwd2').value=${JSON.stringify(PWD)};
+              document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
+    await sleep(2500);
+  }
+
   const unlocked = await js(`return { panel: !document.querySelector('#adminPanel').hidden,
                                       rail: document.querySelectorAll('#adminRail .admin-tab').length,
                                       badge: document.querySelector('#adminDirty').textContent,
                                       paneHas: document.querySelector('#adminPane').innerHTML.length > 200 };`);
-  check(unlocked.panel, '密码设置成功并进入面板（PBKDF2 耗时约 ' + hashMs + 'ms）');
+  check(unlocked.panel, '进入面板成功');
   check(unlocked.rail === 12 && unlocked.paneHas, '左侧 ' + unlocked.rail + ' 个分页，内容已渲染');
   check(/未修改/.test(unlocked.badge), '初始状态徽章为「未修改」');
 
+  // 站点固定密码时，页面内不允许修改或清除密码
+  if (BAKED) {
+    await js(`document.querySelector('[data-tab="security"]').click(); return 1;`);
+    await sleep(500);
+    const sec = await js(`
+      return { changeBtn: !!document.querySelector('#admChangePwd'),
+               forgetBtn: !!document.querySelector('#admForgetPwd'),
+               fixedText: /页面内无法修改|由站点固定/.test(document.querySelector('#adminPane').innerText),
+               pwdInput: !!document.querySelector('#admNewPwd') };
+    `);
+    check(!sec.changeBtn && !sec.pwdInput, '安全页不再提供「修改密码」入口');
+    check(!sec.forgetBtn, '安全页不再提供「清除密码」入口');
+    check(sec.fixedText, '明确告知密码已由站点固定、页面内不可改');
+
+    // 光隐藏按钮不够：直接把处理器喊一遍，也必须被拒绝
+    const guard = await js(`
+      const before = localStorage.getItem('resume.admin.v1');
+      document.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      const fake = document.createElement('button'); fake.id = 'admChangePwd';
+      document.body.appendChild(fake); fake.click();
+      await new Promise(r => setTimeout(r, 300));
+      return { stored: localStorage.getItem('resume.admin.v1'), before: before, toast: (document.querySelector('#toasts')||{}).innerText || '' };
+    `);
+    check(guard.stored === guard.before && /不可修改/.test(guard.toast),
+      '即使手工触发修改处理器也被拒绝：' + guard.toast.trim().slice(0, 30));
+
+    // 本地存的密码不能盖掉站点固定的那份
+    const override = await js(`
+      localStorage.setItem('resume.admin.v1', JSON.stringify({ salt: 'x', hash: 'y', iter: 1 }));
+      return 1;
+    `);
+    await reload('file:///' + path.join(__dirname, 'index.html').replace(/\\/g, '/'));
+    await js(`document.querySelector('#adminEntry').click(); return 1;`);
+    await sleep(600);
+    await js(`document.querySelector('#adminPwd').value=${JSON.stringify(PWD)};
+              document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
+    await sleep(4500);
+    const stillWorks = await js(`return !document.querySelector('#adminPanel').hidden`);
+    check(stillWorks, '本地伪造的凭据无法覆盖站点固定的密码（固定密码优先级更高）');
+    await js(`localStorage.removeItem('resume.admin.v1'); return 1;`);
+    await reload('file:///' + path.join(__dirname, 'index.html').replace(/\\/g, '/'));
+    await js(`document.querySelector('#adminEntry').click(); return 1;`);
+    await sleep(600);
+    await js(`document.querySelector('#adminPwd').value=${JSON.stringify(PWD)};
+              document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
+    await sleep(4500);
+  }
+
   console.log('\n=== 3. 凭据存储方式 ===');
+  // 烘焙模式下凭据在 index.html 里，localStorage 是空的——要分别检查
   const stored = await js(`
     const raw = localStorage.getItem('resume.admin.v1');
-    const rec = JSON.parse(raw);
-    return { hasSalt: !!rec.salt, hasHash: !!rec.hash, iter: rec.iter,
-             leaksPwd: raw.indexOf('test1234') !== -1,
-             saltLen: rec.salt ? rec.salt.length : 0, hashLen: rec.hash ? rec.hash.length : 0,
-             algo: rec.algo || '(未记录)' };
+    const rec = raw ? JSON.parse(raw) : null;
+    const sd = JSON.parse((document.querySelector('#siteData').textContent || '{}').trim() || '{}');
+    const pick = rec || sd.admin || {};
+    return { from: rec ? 'localStorage' : (sd.admin ? 'index.html 烘焙' : '无'),
+             hasSalt: !!pick.salt, hasHash: !!pick.hash, iter: pick.iter || 0,
+             algo: pick.algo || '(未记录)',
+             saltLen: pick.salt ? pick.salt.length : 0,
+             hashLen: pick.hash ? pick.hash.length : 0,
+             leaksPwd: raw ? raw.indexOf(${JSON.stringify(PWD)}) !== -1 : false };
   `);
-  check(!stored.leaksPwd, 'localStorage 里不存明文密码');
+  check(!stored.leaksPwd, '密码以哈希形式存储，不落明文（来源：' + stored.from + '）');
   check(stored.hasSalt && stored.hasHash && stored.iter >= 100000,
-    '存的是加盐哈希：' + stored.algo + ' · salt ' + stored.saltLen + ' 字符 · hash ' + stored.hashLen +
+    stored.from + '：' + stored.algo + ' · salt ' + stored.saltLen + ' 字符 · hash ' + stored.hashLen +
     ' 字符 · ' + Number(stored.iter).toLocaleString('en-US') + ' 次迭代');
   warn(stored.iter >= 200000, 'PBKDF2 迭代次数 ' + stored.iter + '，建议 ≥ 200000');
 
@@ -209,7 +293,7 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
   check(/张伟/.test(html), '导出文件包含编辑后的姓名');
   check(/全新项目名/.test(html), '导出文件包含新增的项目名');
   check(/张伟的个人主页/.test(html), '导出文件的 <title> 已静态写入（不依赖 JS）');
-  check(html.indexOf('test1234') === -1, '导出文件不含明文密码');
+  check(html.indexOf(PWD) === -1, '导出文件不含明文密码');
   check(/data-theme="light"/.test(html), '导出文件的 html 标签已写入主题，避免首帧闪烁');
 
   // 结构化数据（schema.org）以前是硬编码的，导出不会更新——搜索引擎会一直索引最初那个人
@@ -236,7 +320,7 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
     check(!!baked.profile && baked.profile.meta.nameZh === '张伟', 'siteData.profile 内容正确');
     check(!!baked.admin && !!baked.admin.hash && !!baked.admin.salt, 'siteData.admin 已烘焙管理员凭据');
     check(!!baked.cfg && baked.cfg.theme === 'light', 'siteData.cfg 已烘焙站点设置');
-    check(JSON.stringify(baked).indexOf('test1234') === -1, '烘焙数据里没有明文密码');
+    check(JSON.stringify(baked).indexOf(PWD) === -1, '烘焙数据里没有明文密码');
   }
   // 不能直接数源码里的 "<script" —— 导出逻辑的正则字面量本身也含这个序列。
   // 真正该验证的是「浏览器解析出来的结构对不对」，放到第 9 步加载后检查。
@@ -288,7 +372,7 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
   check(/密码错误/.test(bad.msg) && !bad.panelOpen && bad.overlayOpen,
     '错误密码被拒绝且未解锁（面板 ' + (bad.panelOpen ? '已打开' : '仍关闭') + '）：' + bad.msg.trim());
 
-  await js(`document.querySelector('#adminPwd').value='test1234'; document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
+  await js(`document.querySelector('#adminPwd').value=${PWDJS}; document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
   await sleep(5000);
   const good = await js(`return { panel: !document.querySelector('#adminPanel').hidden };`);
   check(good.panel, '正确密码在导出的文件里也能登录');
@@ -317,7 +401,7 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
     '连续 ' + after5.attempts.n + ' 次失败后记入限速状态');
   console.log('        第 5 次失败的提示：' + after5.msg.trim());
 
-  await js(`document.querySelector('#adminPwd').value='test1234';
+  await js(`document.querySelector('#adminPwd').value=${PWDJS};
             document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
   await sleep(1500);
   const blocked = await js(`return { msg: document.querySelector('#adminLoginMsg').textContent,
@@ -330,7 +414,7 @@ const warn = (ok, msg) => { if (!ok) { console.log('  WARN  ' + msg); warns++; }
   await reload('file:///' + EXPORT_PATH.replace(/\\/g, '/'));
   await js(`document.querySelector('#adminEntry').click(); return 1;`);
   await sleep(700);
-  await js(`document.querySelector('#adminPwd').value='test1234'; document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
+  await js(`document.querySelector('#adminPwd').value=${PWDJS}; document.querySelector('#adminLoginForm').requestSubmit(); return 1;`);
   await sleep(5000);
   const s1 = await js(`return { panel: !document.querySelector('#adminPanel').hidden,
                                 flag: sessionStorage.getItem('resume.admin.session') };`);
